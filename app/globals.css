@@ -11,4 +11,8 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
 /* Keep utility labels legible on smaller screens. */
+.map-toggle{display:none}
+.map-exercise-caption{font-size:9px;color:#a38b75;text-align:center;margin-top:14px}
+@media(max-width:800px){.muscle-page-grid>.muscle-panel{order:0}.muscle-page-grid>div{order:1}}
+@media(max-width:800px){.session-body{display:block;padding:12px 16px}.session-body .map-toggle{display:inline-flex;margin-left:auto}.session-body .body-svg{display:none;height:220px}.session-body.expanded .body-svg{display:block}.session-body>strong,.session-body>span,.session-body>small{display:none}.session-body.expanded>strong,.session-body.expanded>span,.session-body.expanded>small{display:block}}
 @media(max-width:550px){.stat .eyebrow{font-size:7px;letter-spacing:.5px}.stat-number small{font-size:8px}.stat:nth-child(3) .stat-number small{font-size:8px}.nav-item>span:not(.nav-dot){font-size:9px}.exercise-info strong{font-size:12px}.exercise-info small{font-size:9px}.exercise-dose small{font-size:8px}.exercise-number{font-size:9px}.hero-eyebrow{font-size:8px}.demo-notice{font-size:9px}.panel-heading .eyebrow{font-size:8px}.workout-footer>span{font-size:9px}.topbar .local-status{font-size:9px}.session-setup{font-size:8px}.set-table-head{font-size:8px}.session-exercise h3{font-size:12px}.session-exercise-head small{font-size:8px}.previous-set{font-size:9px}.map-legend>span{font-size:9px}}
