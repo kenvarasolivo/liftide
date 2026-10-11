@@ -15,10 +15,12 @@ Open http://127.0.0.1:3000. `npm run build` produces a static export in `out/`.
 
 - Machine-first logging: choose equipment, enter one set, rest, then log the next set. Switch machines whenever you like.
 - Previous-set weights and reps, large number controls, undo/restore and free-training session history.
+- Name the current session from its top-right review dialog. The name saves while you train and carries into history when you finish.
 - Automatic rest timer with pause, resume, early finish and time adjustment; clock-based countdown survives tab changes and refreshes.
 - Interactive front/back muscle map, including upper chest and seven-day training coverage.
-- Direct progress shortcuts on every machine card. The default overview charts session volume (the sum of weight × reps across completed sets), with selectable sessions, changes against the previous session, and set/rep breakdowns. Weight and rep charts remain available.
+- Direct progress shortcuts on every machine card and the logging screen, with a return to logging that keeps your sets and rest timer. The default overview charts session volume (the sum of weight × reps across completed sets), with selectable sessions, changes against the previous session, and set/rep breakdowns. Weight and rep charts remain available.
 - Configurable rest and editable setup notes.
+- Customize primary and secondary muscle targets in machine settings, including default equipment. These targets update the body map, muscle filters and seven-day coverage; primary muscles count toward coverage.
 - Ten generated equipment photos covering eleven default machines, favorites, custom machines and personal photo replacement through IndexedDB.
 - Responsive desktop and mobile layouts, accessible dialogs and keyboard-selectable muscles.
 - Browser-local persistence and JSON export. Existing Liftide v1 history and completed sets migrate without changing the original storage. New users start with an empty log; earlier sample data remains labeled and removable in Settings.

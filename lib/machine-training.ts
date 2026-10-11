@@ -3,6 +3,7 @@ import { exercises, type Exercise, type Muscle, type Session, totalSets } from '
 export type CustomMachine = Exercise & { photoId: string };
 export type Rest = { exerciseId: string; endAt: number | null; paused: number | null; duration: number; complete: boolean };
 export type Draft = { weight: string; reps: string };
+export type MuscleTargets = { muscles: Muscle[]; secondary: Muscle[] };
 export type TrainingData = {
   version: 2;
   history: Session[];
@@ -13,12 +14,13 @@ export type TrainingData = {
   setups: Record<string, string>;
   labels: Record<string, string>;
   restPreferences: Record<string, number>;
+  muscleTargets: Record<string, MuscleTargets>;
   favorites: string[];
   customMachines: CustomMachine[];
   name: string;
 };
 export const STORAGE_KEY = 'liftide-v2';
-export const emptyData: TrainingData = { version: 2, history: [], current: null, selectedId: null, rest: null, drafts: {}, setups: {}, labels: {}, restPreferences: {}, favorites: [], customMachines: [], name: '' };
+export const emptyData: TrainingData = { version: 2, history: [], current: null, selectedId: null, rest: null, drafts: {}, setups: {}, labels: {}, restPreferences: {}, muscleTargets: {}, favorites: [], customMachines: [], name: '' };
 export const categories = ['All machines', 'Chest', 'Back', 'Shoulders', 'Arms', 'Legs', 'Core'] as const;
 export type Category = typeof categories[number];
 export function category(e: Exercise): Category {
@@ -60,7 +62,9 @@ export function readTraining(): TrainingData {
   const current: Session | null = validSession(legacyCurrent) && totalSets(legacyCurrent) > 0 ? { ...legacyCurrent, sets: Object.fromEntries(Object.entries(legacyCurrent.sets).map(([id, sets]) => [id, sets.filter(x => x.done)])) } : null;
   return { ...emptyData, history: Array.isArray(saved.history) ? saved.history.filter(validSession) : [], current, setups: saved.setups ?? {}, name: typeof saved.name === 'string' ? saved.name : '' };
 }
-export function equipmentFor(data: TrainingData): Exercise[] { return [...exercises, ...data.customMachines]; }
+export function equipmentFor(data: TrainingData): Exercise[] {
+  return [...exercises, ...data.customMachines].map(e => data.muscleTargets[e.id] ? { ...e, ...data.muscleTargets[e.id] } : e);
+}
 export function muscleCount(data: TrainingData, muscle: Muscle, now: number): number {
   const equipment = equipmentFor(data);
   return [...data.history.filter(s => s.started >= now - 7 * 86400000), ...(data.current ? [data.current] : [])].reduce((total, session) => total + Object.entries(session.sets).reduce((sum,[id,sets]) => sum + (equipment.find(e => e.id === id)?.muscles.includes(muscle) ? sets.filter(s => s.done).length : 0), 0), 0);
