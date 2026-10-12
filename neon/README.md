@@ -82,3 +82,19 @@ Live Neon Auth and production email delivery cannot be tested without your proje
 
 References: [Neon Next.js Auth SDK](https://github.com/neondatabase/neon-js/blob/main/packages/auth/NEXT-JS.md)
 and [managed Neon Auth](https://neon.com/docs/auth/overview).
+
+## Vercel auth and manifest errors
+
+A 403 with `INVALID_ORIGIN` from Neon Auth means the site's exact origin needs
+an entry in Neon Settings > Better Auth > Domains. Use the stable production
+origin for normal usage, and add exact preview origins individually when needed.
+A Vercel deployment-specific hostname can be different from the production alias.
+
+The manifest link uses `crossorigin="use-credentials"` to include an existing
+Vercel protection cookie when fetching the manifest. A protected deployment still
+requires Vercel access; this does not bypass deployment protection. The stable
+public production alias avoids preview SSO redirects for ordinary users. Adding
+CORS headers to the app cannot change Vercel's external SSO response.
+
+The `beforeinstallprompt.preventDefault()` message is informational: Liftide
+stores the event and presents its own Install button, which calls `prompt()`.

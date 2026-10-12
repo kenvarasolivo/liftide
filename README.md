@@ -31,7 +31,7 @@ download keeps the previous offline version. Validate by running a production se
 the app online, waiting for the worker to activate, then disabling the network
 and reloading `/train`. Also check navigation from `/` to `/train` while offline.
 
-PWA files: `app/manifest.ts`, `components/pwa-controls.tsx`,
+PWA files: `lib/app-manifest.ts`, `app/manifest.webmanifest/route.ts`, `components/pwa-controls.tsx`,
 `scripts/build-pwa.mjs`, `scripts/service-worker.js`, and `public/icons/`.
 
 ## Accounts and Neon
