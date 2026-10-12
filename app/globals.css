@@ -29,3 +29,67 @@
 
 /* Keep complete equipment visible in the cropped catalog photographs. */
 .machine-photo{aspect-ratio:1.5;background:#191a1b}.machine-photo img[src*="/equipment/catalog/"],.selected-photo img[src*="/equipment/catalog/"],.progress-machine-heading img[src*="/equipment/catalog/"],.muscle-suggestions img[src*="/equipment/catalog/"]{object-fit:contain;background:#191a1b}
+/* Body command center: a cool diagnostic space within the warm app. */
+.body-command{--body-blue:#78d5f8;--body-muted:#9baebb;--amber:var(--body-blue);position:relative;isolation:isolate}
+.body-command::before{content:"";position:absolute;inset:-28px -24px;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 25% 35%,#183c5429,transparent 65%)}
+.body-command .eyebrow{color:#83b6cd;font-size:10px;letter-spacing:1.8px}
+.body-command-heading{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.body-command-heading h1{margin-top:8px}
+.body-command-heading p{color:var(--body-muted)}
+.body-period{display:inline-flex;align-items:center;gap:8px;padding:9px 13px;background:#14202a;border:1px solid #30434f;border-radius:9px;color:#bad1de;font-size:12px;white-space:nowrap}
+.body-overview{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:25px;border:1px solid #30414c;border-radius:16px;background:linear-gradient(120deg,#1b2832,#151c23);overflow:hidden}
+.body-overview>div{padding:20px 25px;position:relative}
+.body-overview>div+div::before{content:"";position:absolute;left:0;top:22px;bottom:22px;width:1px;background:#33444f}
+.body-overview span{display:block;color:var(--body-muted);font-size:12px}
+.body-overview strong{display:block;font-size:32px;font-weight:550;letter-spacing:-1px;margin-top:4px;font-variant-numeric:tabular-nums;color:#e3f4fc}
+.body-overview small{font-size:15px;letter-spacing:0;color:#91adbf;font-weight:400}
+.body-command .card{background:linear-gradient(135deg,#1b252e,#151b22 70%);border:1px solid #30404b;border-radius:18px;box-shadow:0 12px 35px #0000001a,inset 0 1px #ffffff04}
+.body-command .card-heading{align-items:center}
+.body-command .card-heading h2{margin-top:5px;font-size:23px;letter-spacing:-.6px}
+.body-command .segmented{border-color:#334957;background:#101920;border-radius:9px}
+.body-command .segmented button{border-radius:6px;color:#9eb0bd;transition:background .2s,color .2s}
+.body-command .segmented button.selected{background:#214459;color:#c0efff;box-shadow:inset 0 0 0 1px #6ecff533}
+.body-command .segmented button:hover{color:#d2f3ff}
+.body-command .diagnostic-chamber{height:480px;position:relative;margin:22px 0 18px;padding:38px 12px 35px;overflow:hidden;border:1px solid #2e465655;border-radius:12px;background:radial-gradient(ellipse at 50% 48%,#22577840,transparent 68%),linear-gradient(#78c9f807 1px,transparent 1px),linear-gradient(90deg,#78c9f807 1px,transparent 1px),#111a22;background-size:auto,32px 32px,32px 32px,auto}
+.diagnostic-chamber::before,.diagnostic-chamber::after{content:"";position:absolute;top:65px;bottom:65px;width:8px;opacity:.6;background:repeating-linear-gradient(to bottom,#7099b1 0 1px,transparent 1px 24px);border-left:1px solid #446375}
+.diagnostic-chamber::before{left:17px}.diagnostic-chamber::after{right:17px;transform:scaleX(-1)}
+.chamber-label,.chamber-hint{position:absolute;left:0;right:0;text-align:center;color:#8ca8b9;font-size:9px;letter-spacing:2px;z-index:2}
+.chamber-label{top:14px}.chamber-hint{bottom:12px;font-size:10px;letter-spacing:.5px;color:#9cb4c3}
+.chamber-platform{position:absolute;bottom:26px;left:50%;width:190px;height:35px;transform:translateX(-50%);border:1px solid #6bd5ff55;border-radius:50%;background:radial-gradient(ellipse,#41b8ed25,transparent 65%);box-shadow:0 0 25px #3ba8df15,inset 0 0 14px #67d5ff0f}
+.diagnostic-body{position:relative;z-index:1;filter:drop-shadow(0 0 16px #4eb9e814)}
+.diagnostic-body .muscle-region path{transition:fill .2s,stroke .2s,filter .2s}
+.diagnostic-body .muscle-region[data-active=true] path{filter:drop-shadow(0 0 3px #4bbef455)}
+.diagnostic-body .muscle-region[data-selected=true] path,.diagnostic-body .muscle-region:hover path,.diagnostic-body .muscle-region:focus-visible path{stroke:#c1f1ff;stroke-width:1.8;filter:drop-shadow(0 0 4px #7bdbff88)}
+.body-command .body-legend{color:#afc4d2;gap:20px;font-size:11px;flex-wrap:wrap}
+.body-command .body-legend i{background:#75d6fc;box-shadow:0 0 7px #68d6ff40}
+.body-command .body-legend>span:last-child{color:#96a6b2}
+.body-command .body-legend>span:last-child i{background:#435867;box-shadow:none}
+.body-command .body-selected-detail{display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:left;background:#142632;border:1px solid #345d72;border-radius:12px;padding:17px 18px}
+.body-selected-detail>div>span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1.1px;color:#8dafc1}
+.body-command .body-selected-detail strong{color:#d2f2ff;font-size:23px;font-weight:550;margin-top:5px}
+.body-command .body-selected-detail p{text-align:right;margin:0;flex-shrink:0}
+.body-command .body-selected-detail p strong{font-size:29px;line-height:1.2;font-variant-numeric:tabular-nums;margin:0}
+.body-selected-detail p>span{display:block;font-size:10px;color:#9bbaca;margin-top:5px}
+.body-command .coverage-unit{font-size:9px;letter-spacing:1.5px;color:#8aa6b8}
+.body-command .coverage-row{min-height:44px;border-radius:7px;transition:background .2s;gap:12px}
+.body-command .coverage-row>span:first-child{color:#bdcbd5}
+.body-command .coverage-row.selected{background:#23425780;box-shadow:inset 2px 0 #7fd7f6}
+.body-command .coverage-row:hover{background:#253b4b}
+.body-command .coverage-row strong{color:#b6dff2;font-variant-numeric:tabular-nums}
+.body-command .coverage-track{height:4px;background:#30404c;border-radius:3px}
+.body-command .coverage-track i{background:linear-gradient(90deg,#367cba,#80dcfa);box-shadow:0 0 8px #6acdfa25;border-radius:3px}
+.body-command .gentle-note{border-top:1px solid #2c3c48;padding-top:17px;color:#91a4b2;line-height:1.75;font-size:11px}
+.body-command .muscle-suggestions{max-height:350px}
+.body-command .muscle-suggestions>button{border-color:#2d3c48;border-radius:8px;transition:background .2s}
+.body-command .muscle-suggestions>button:hover{background:#233948}
+.body-command .muscle-suggestions>button>svg{color:#87d6f5}
+.body-command .muscle-suggestions small{color:#8caebb}
+.body-command .secondary-button{border-color:#3e6175;color:#c5ecff;background:#1d3545}
+@media(min-width:1100px){.body-command .body-page{grid-template-columns:minmax(320px,1fr) minmax(0,1.05fr);gap:24px}.body-command .full-body-card{padding:25px}.body-command .diagnostic-chamber{height:510px}}
+@media(max-width:600px){.body-command-heading{align-items:flex-start;gap:12px}.body-command-heading h1{font-size:29px}.body-period{font-size:0;padding:8px}.body-period svg{width:17px;height:17px}.body-overview{margin-bottom:20px;border-radius:12px}.body-overview>div{padding:15px 12px}.body-overview span{font-size:10px}.body-overview strong{font-size:26px}.body-overview small{font-size:12px}.body-command .card{border-radius:15px}.body-command .card-heading h2{font-size:21px}.body-command .eyebrow{font-size:8px;letter-spacing:1.4px}.body-command .diagnostic-chamber{height:440px;margin-top:20px}.body-command .body-selected-detail{padding:15px 13px}.body-command .body-selected-detail strong{font-size:20px}.body-command .body-selected-detail p strong{font-size:26px}.body-selected-detail p>span{font-size:9px}.body-command .body-legend{gap:14px;font-size:10px}}
+
+/* Match Body navigation to its diagnostic accent. */
+.nav-item[data-nav="Body"]:hover{background:#1d2d39;color:#bcecff}
+.nav-item[data-nav="Body"].active{background:linear-gradient(115deg,#24465c,#192c3a);color:#bcecff;border-color:#3b6b82}
+.nav-item[data-nav="Body"] i{background:#78d5f8;box-shadow:0 0 8px #78d5f84d}
+.nav-item[data-nav="Body"]:focus-visible{outline-color:#78d5f8}
