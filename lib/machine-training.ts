@@ -1,4 +1,5 @@
 import { exercises, type Exercise, type Muscle, type Session, totalSets } from './training';
+import { equipmentPhotos } from './equipment-photos';
 
 export type CustomMachine = Exercise & { photoId: string };
 export type Rest = { exerciseId: string; endAt: number | null; paused: number | null; duration: number; complete: boolean };
@@ -33,6 +34,8 @@ export function category(e: Exercise): Category {
 }
 export function defaultPhoto(e: Exercise): string {
   const id = 'photoId' in e ? String(e.photoId) : e.id;
+  if (equipmentPhotos[id]) return equipmentPhotos[id];
+  if (e.illustration) return `/equipment/illustrations/${e.illustration}.svg`;
   return `/equipment/${['triceps','abs'].includes(id) ? 'cable' : id}.webp`;
 }
 export function lastSet(data: TrainingData, id: string) {
@@ -41,7 +44,7 @@ export function lastSet(data: TrainingData, id: string) {
   return data.history.find(s => s.sets[id]?.some(x => x.done))?.sets[id].filter(s => s.done).at(-1);
 }
 export function getDraft(data: TrainingData, e: Exercise): Draft {
-  return data.drafts[e.id] ?? { weight: String(lastSet(data,e.id)?.weight ?? e.weight), reps: String(lastSet(data,e.id)?.reps ?? 10) };
+  return data.drafts[e.id] ?? { weight: String(lastSet(data,e.id)?.weight ?? e.weight), reps: String(lastSet(data,e.id)?.reps ?? e.reps) };
 }
 function validSession(value: unknown): value is Session {
   if (!value || typeof value !== 'object') return false;

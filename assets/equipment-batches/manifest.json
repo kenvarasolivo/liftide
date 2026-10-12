@@ -1,0 +1,87 @@
+[
+  {
+    "ids": [
+      "chest-press",
+      "smith-press",
+      "bench-press",
+      "dumbbell-press",
+      "incline-dumbbell",
+      "cable-fly"
+    ],
+    "columns": 3,
+    "rows": 2,
+    "prompt": "Use case: product-mockup. Create ONE photorealistic gym equipment catalog CONTACT SHEET to be precisely cropped into SIX separate images. Canvas landscape 3:2. EXACT regular grid: THREE equal columns by TWO equal rows. Each panel independent full scene; straight panel boundaries at 1/3,2/3 width and 1/2 height. No thick gutters. Each piece fits completely inside its own panel with generous 12% margins, full equipment visible, NO text, labels, letters, numbers, logos, watermark, people. Consistent premium real photography: black powder-coated steel, black upholstery, dark charcoal empty gym, softly illuminated concrete floor, warm amber rim light, readable shadows. Each panel three-quarter view. Subjects in STRICT reading order: TOP LEFT seated selectorized CHEST PRESS MACHINE, horizontal independent handles and upright seat; TOP MIDDLE SMITH MACHINE with guided barbell and FLAT BENCH positioned for bench press; TOP RIGHT FREE BARBELL BENCH PRESS station, flat padded bench under a loaded barbell in simple bench rack (not Smith); BOTTOM LEFT pair of black hex DUMBBELLS next to a FLAT BENCH for dumbbell bench press; BOTTOM MIDDLE pair of black hex DUMBBELLS next to an INCLINE BENCH with backrest raised 30 degrees; BOTTOM RIGHT DUAL CABLE FLY station with two towers and single handles at chest height. Do not blend scenes. Each panel a usable standalone photo, no cropped equipment.",
+    "sheet": "sheet-01.png"
+  },
+  {
+    "ids": [
+      "assisted-pullup",
+      "pullup",
+      "chest-supported-row",
+      "barbell-row",
+      "dumbbell-row",
+      "back-extension"
+    ],
+    "columns": 3,
+    "rows": 2,
+    "prompt": "Use case: product-mockup. ONE photorealistic gym catalog CONTACT SHEET, landscape 3:2, EXACT THREE equal columns by TWO equal rows, six independent panels, boundaries at thirds of width and half height. All subjects fully inside own panel with 10% clearance, no overlap. Consistent premium equipment photography: black steel and upholstery, clean charcoal gym, concrete floor, warm amber rim light, readable shadows, three-quarter camera view. No text, labels, logos, watermark. STRICT reading order TOP LEFT assisted pull-up/dip machine with overhead handles, knee assistance pad and visible weight stack, no person; TOP MIDDLE simple tall standalone pull-up rack with high horizontal pull-up bar, no weights or person; TOP RIGHT chest-supported seated row machine with angled chest pad, paired pulling handles, loaded side plates; BOTTOM LEFT loaded barbell lying on floor in front of a flat bench, arranged for bent-over rows, no person; BOTTOM MIDDLE one black hex dumbbell resting next to flat bench for single-arm rows, no person; BOTTOM RIGHT 45-degree Roman chair back-extension bench with hip pads, ankle rollers and foot platform, no person. All six are different recognisable equipment photos.",
+    "sheet": "sheet-02.png"
+  },
+  {
+    "ids": [
+      "reverse-fly",
+      "lateral-raise",
+      "dumbbell-shoulder",
+      "face-pull",
+      "dumbbell-curl",
+      "hammer-curl"
+    ],
+    "columns": 3,
+    "rows": 2,
+    "prompt": "Use case: product-mockup. ONE photorealistic gym catalog CONTACT SHEET, landscape 3:2, EXACT THREE equal columns by TWO equal rows, six independent panels, boundaries at thirds of width and half height. All subjects fully inside own panel with 10% clearance, no overlap. Consistent premium equipment photography: black steel and upholstery, clean charcoal gym, concrete floor, warm amber rim light, readable shadows, three-quarter camera view. No text, labels, logos, watermark. STRICT reading order TOP LEFT reverse pec deck machine with seated chest pad facing tower and wide rear-delt handles, no person; TOP MIDDLE muscular adult in plain black athletic clothing performing dumbbell lateral raise, both dumbbells raised sideways to shoulder level, whole body visible; TOP RIGHT upright adjustable bench with pair of hex dumbbells beside it for shoulder press, no person; BOTTOM LEFT cable tower with rope attachment at face height, adult in black athletic clothing showing face-pull starting stance, whole machine and person visible; BOTTOM MIDDLE adult in black athletic clothing performing dumbbell biceps curl with supinated palms, whole body visible; BOTTOM RIGHT adult in black athletic clothing performing hammer curl, dumbbells vertical with palms inward, whole body visible. Faces secondary, catalogue focus on equipment, plausible human anatomy.",
+    "sheet": "sheet-03.png"
+  },
+  {
+    "ids": [
+      "cable-curl",
+      "triceps-extension",
+      "assisted-dip",
+      "leg-extension",
+      "lying-leg-curl",
+      "hack-squat"
+    ],
+    "columns": 3,
+    "rows": 2,
+    "prompt": "Use case: product-mockup. ONE photorealistic gym catalog CONTACT SHEET, landscape 3:2, EXACT THREE equal columns by TWO equal rows, six independent panels, boundaries at thirds of width and half height. All subjects fully inside own panel with 10% clearance, no overlap. Consistent premium equipment photography: black steel and upholstery, clean charcoal gym, concrete floor, warm amber rim light, readable shadows, three-quarter camera view. No text, labels, logos, watermark. STRICT reading order TOP LEFT cable tower with LOW pulley and short EZ curl bar attached for cable biceps curl, no person; TOP MIDDLE adult in plain black athletic clothing performing overhead rope cable triceps extension, facing away from cable column, rope extending behind head, entire equipment fits in panel; TOP RIGHT assisted DIP machine with parallel handles at waist height and knee assistance platform, tall stack, no person; BOTTOM LEFT seated LEG EXTENSION machine with upright seat, thigh pads and horizontal ankle roller in front, no person; BOTTOM MIDDLE LYING LEG CURL machine with long flat angled padded bed and ankle roller at end, no person; BOTTOM RIGHT plate-loaded 45-degree HACK SQUAT sled with large backrest and shoulder pads on diagonal rails and broad foot platform, no person. Mechanically plausible commercial equipment, full equipment including bases visible.",
+    "sheet": "sheet-04.png"
+  },
+  {
+    "ids": [
+      "smith-squat",
+      "barbell-squat",
+      "romanian-deadlift",
+      "deadlift",
+      "hip-thrust",
+      "goblet-squat"
+    ],
+    "columns": 3,
+    "rows": 2,
+    "prompt": "Use case: product-mockup. ONE photorealistic gym catalog CONTACT SHEET, landscape 3:2, EXACT THREE equal columns by TWO equal rows, six independent panels, boundaries at thirds of width and half height. All subjects fully inside own panel with 10% clearance, no overlap. Consistent premium equipment photography: black steel and upholstery, clean charcoal gym, concrete floor, warm amber rim light, readable shadows, three-quarter camera view. No text, labels, logos, watermark. STRICT reading order TOP LEFT SMITH MACHINE for squats, vertical guided loaded bar, safety stops, empty rack NO bench, no person; TOP MIDDLE FREE BARBELL SQUAT power rack with loaded barbell on hooks at shoulder height, safety bars, empty floor, NO bench or person; TOP RIGHT adult in plain black athletic clothing demonstrating Romanian deadlift, standing knees softly bent and hips hinged with loaded bar at shin height, full body and bar visible; BOTTOM LEFT deadlift equipment: loaded barbell on rubber lifting platform, black bumper plates on each side, no person, NO bench; BOTTOM MIDDLE commercial HIP THRUST machine with low padded back support, broad hip belt and large foot platform, side weight plates, no person; BOTTOM RIGHT black cast-iron KETTLEBELL with thick rounded handle, centered on concrete floor in same dark gym, no person. Distinct subjects, no duplicate machines.",
+    "sheet": "sheet-05.png"
+  },
+  {
+    "ids": [
+      "split-squat",
+      "seated-calf",
+      "ab-machine",
+      "hanging-knee",
+      "pushup",
+      "triceps",
+      "abs"
+    ],
+    "columns": 4,
+    "rows": 2,
+    "prompt": "Use case: product-mockup. ONE gym equipment contact sheet for cropping. Landscape TWO-TO-ONE canvas, EXACT FOUR equal-width columns and TWO equal-height rows, EIGHT separate rectangular panels, thin straight white dividers at 1/4,1/2,3/4 width and half height. Each panel independent scene, subjects entirely contained with 10% clearance. Photorealistic premium gym photography, black steel, black upholstery, dark charcoal gym and concrete floor, warm amber rim lighting, readable shadows. No logos, labels, text or watermark. STRICT reading order: TOP LEFT adult in plain black athletic clothing doing Bulgarian split squat, rear foot on flat bench, one hex dumbbell in each hand, full person and bench visible; TOP SECOND seated plate-loaded CALF RAISE machine with thigh/knee pads above seat and raised forefoot platform, no person; TOP THIRD seated ABDOMINAL CRUNCH MACHINE with upright seat, shoulder handles and padded chest lever connected to weight stack, no person; TOP RIGHT adult in black athletic clothing in captain's chair station demonstrating bent-knee raise, supported forearms and back pad, knees raised, whole person and equipment visible; BOTTOM LEFT adult in black athletic clothing doing floor PUSH-UP on dark gym mat, side view, straight body, whole person visible; BOTTOM SECOND CABLE TRICEPS PUSHDOWN station with rope attached to HIGH pulley, adult standing facing tower pressing rope down toward thighs, full machine and person visible; BOTTOM THIRD kneeling CABLE CRUNCH exercise, adult in black athletic clothing kneeling on gym mat facing tower with high-pulley rope held near head, whole equipment and person visible; BOTTOM RIGHT leave blank dark charcoal panel with no object. Keep each exercise distinct, plausible anatomy and complete machines.",
+    "sheet": "sheet-06.png"
+  }
+]

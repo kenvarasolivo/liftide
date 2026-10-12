@@ -1,0 +1,520 @@
+[
+  {
+    "id": "chest-press",
+    "sheet": "sheet-01.png",
+    "crop": [
+      5,
+      5,
+      506,
+      506
+    ],
+    "size": [
+      501,
+      501
+    ]
+  },
+  {
+    "id": "smith-press",
+    "sheet": "sheet-01.png",
+    "crop": [
+      516,
+      5,
+      1019,
+      506
+    ],
+    "size": [
+      503,
+      501
+    ]
+  },
+  {
+    "id": "bench-press",
+    "sheet": "sheet-01.png",
+    "crop": [
+      1029,
+      5,
+      1531,
+      506
+    ],
+    "size": [
+      502,
+      501
+    ]
+  },
+  {
+    "id": "dumbbell-press",
+    "sheet": "sheet-01.png",
+    "crop": [
+      5,
+      516,
+      506,
+      1019
+    ],
+    "size": [
+      501,
+      503
+    ]
+  },
+  {
+    "id": "incline-dumbbell",
+    "sheet": "sheet-01.png",
+    "crop": [
+      516,
+      516,
+      1019,
+      1019
+    ],
+    "size": [
+      503,
+      503
+    ]
+  },
+  {
+    "id": "cable-fly",
+    "sheet": "sheet-01.png",
+    "crop": [
+      1029,
+      516,
+      1531,
+      1019
+    ],
+    "size": [
+      502,
+      503
+    ]
+  },
+  {
+    "id": "assisted-pullup",
+    "sheet": "sheet-02.png",
+    "crop": [
+      5,
+      5,
+      507,
+      507
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "pullup",
+    "sheet": "sheet-02.png",
+    "crop": [
+      517,
+      5,
+      1019,
+      507
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "chest-supported-row",
+    "sheet": "sheet-02.png",
+    "crop": [
+      1029,
+      5,
+      1531,
+      507
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "barbell-row",
+    "sheet": "sheet-02.png",
+    "crop": [
+      5,
+      517,
+      507,
+      1019
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "dumbbell-row",
+    "sheet": "sheet-02.png",
+    "crop": [
+      517,
+      517,
+      1019,
+      1019
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "back-extension",
+    "sheet": "sheet-02.png",
+    "crop": [
+      1029,
+      517,
+      1531,
+      1019
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "reverse-fly",
+    "sheet": "sheet-03.png",
+    "crop": [
+      5,
+      5,
+      507,
+      463
+    ],
+    "size": [
+      502,
+      458
+    ]
+  },
+  {
+    "id": "lateral-raise",
+    "sheet": "sheet-03.png",
+    "crop": [
+      517,
+      5,
+      1019,
+      463
+    ],
+    "size": [
+      502,
+      458
+    ]
+  },
+  {
+    "id": "dumbbell-shoulder",
+    "sheet": "sheet-03.png",
+    "crop": [
+      1029,
+      5,
+      1531,
+      463
+    ],
+    "size": [
+      502,
+      458
+    ]
+  },
+  {
+    "id": "face-pull",
+    "sheet": "sheet-03.png",
+    "crop": [
+      5,
+      473,
+      507,
+      1019
+    ],
+    "size": [
+      502,
+      546
+    ]
+  },
+  {
+    "id": "dumbbell-curl",
+    "sheet": "sheet-03.png",
+    "crop": [
+      517,
+      473,
+      1019,
+      1019
+    ],
+    "size": [
+      502,
+      546
+    ]
+  },
+  {
+    "id": "hammer-curl",
+    "sheet": "sheet-03.png",
+    "crop": [
+      1029,
+      473,
+      1531,
+      1019
+    ],
+    "size": [
+      502,
+      546
+    ]
+  },
+  {
+    "id": "cable-curl",
+    "sheet": "sheet-04.png",
+    "crop": [
+      5,
+      5,
+      506,
+      494
+    ],
+    "size": [
+      501,
+      489
+    ]
+  },
+  {
+    "id": "triceps-extension",
+    "sheet": "sheet-04.png",
+    "crop": [
+      516,
+      5,
+      1019,
+      494
+    ],
+    "size": [
+      503,
+      489
+    ]
+  },
+  {
+    "id": "assisted-dip",
+    "sheet": "sheet-04.png",
+    "crop": [
+      1029,
+      5,
+      1531,
+      494
+    ],
+    "size": [
+      502,
+      489
+    ]
+  },
+  {
+    "id": "leg-extension",
+    "sheet": "sheet-04.png",
+    "crop": [
+      5,
+      504,
+      506,
+      1019
+    ],
+    "size": [
+      501,
+      515
+    ]
+  },
+  {
+    "id": "lying-leg-curl",
+    "sheet": "sheet-04.png",
+    "crop": [
+      516,
+      504,
+      1019,
+      1019
+    ],
+    "size": [
+      503,
+      515
+    ]
+  },
+  {
+    "id": "hack-squat",
+    "sheet": "sheet-04.png",
+    "crop": [
+      1029,
+      504,
+      1531,
+      1019
+    ],
+    "size": [
+      502,
+      515
+    ]
+  },
+  {
+    "id": "smith-squat",
+    "sheet": "sheet-05.png",
+    "crop": [
+      5,
+      5,
+      507,
+      507
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "barbell-squat",
+    "sheet": "sheet-05.png",
+    "crop": [
+      517,
+      5,
+      1019,
+      507
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "romanian-deadlift",
+    "sheet": "sheet-05.png",
+    "crop": [
+      1029,
+      5,
+      1531,
+      507
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "deadlift",
+    "sheet": "sheet-05.png",
+    "crop": [
+      5,
+      517,
+      507,
+      1019
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "hip-thrust",
+    "sheet": "sheet-05.png",
+    "crop": [
+      517,
+      517,
+      1019,
+      1019
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "goblet-squat",
+    "sheet": "sheet-05.png",
+    "crop": [
+      1029,
+      517,
+      1531,
+      1019
+    ],
+    "size": [
+      502,
+      502
+    ]
+  },
+  {
+    "id": "split-squat",
+    "sheet": "sheet-06.png",
+    "crop": [
+      5,
+      5,
+      439,
+      438
+    ],
+    "size": [
+      434,
+      433
+    ]
+  },
+  {
+    "id": "seated-calf",
+    "sheet": "sheet-06.png",
+    "crop": [
+      449,
+      5,
+      882,
+      438
+    ],
+    "size": [
+      433,
+      433
+    ]
+  },
+  {
+    "id": "ab-machine",
+    "sheet": "sheet-06.png",
+    "crop": [
+      892,
+      5,
+      1325,
+      438
+    ],
+    "size": [
+      433,
+      433
+    ]
+  },
+  {
+    "id": "hanging-knee",
+    "sheet": "sheet-06.png",
+    "crop": [
+      1335,
+      5,
+      1769,
+      438
+    ],
+    "size": [
+      434,
+      433
+    ]
+  },
+  {
+    "id": "pushup",
+    "sheet": "sheet-06.png",
+    "crop": [
+      5,
+      448,
+      439,
+      882
+    ],
+    "size": [
+      434,
+      434
+    ]
+  },
+  {
+    "id": "triceps",
+    "sheet": "sheet-06.png",
+    "crop": [
+      449,
+      448,
+      882,
+      882
+    ],
+    "size": [
+      433,
+      434
+    ]
+  },
+  {
+    "id": "abs",
+    "sheet": "sheet-06.png",
+    "crop": [
+      892,
+      448,
+      1325,
+      882
+    ],
+    "size": [
+      433,
+      434
+    ]
+  }
+]

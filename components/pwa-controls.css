@@ -1,0 +1,4 @@
+.pwa-bar{display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 20px;background:#30261e;border-bottom:1px solid #634a35;color:#efcba9;font-size:13px;line-height:1.6}
+.pwa-bar p{margin:0;max-width:650px}.pwa-bar button{flex-shrink:0;border:1px solid #a67a55;border-radius:9px;padding:8px 13px;background:#e6b182;color:#17191b;font:inherit;font-weight:600;cursor:pointer;min-height:44px}
+.pwa-bar .pwa-dismiss{background:transparent;color:#efcba9;border-color:transparent;font-size:22px;padding:4px 12px}.pwa-bar button:focus-visible{outline:2px solid #fff;outline-offset:3px}.pwa-bar button:disabled{opacity:.6;cursor:wait}
+@media(max-width:600px){.pwa-bar{justify-content:space-between;gap:10px;padding:10px 14px;font-size:12px}.pwa-bar p{flex:1}}

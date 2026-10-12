@@ -5,17 +5,17 @@ import { formatDate, formatNumber } from '@/lib/machine-training';
 import { progressPoints, relativeChange, type ProgressMetric } from '@/lib/progress';
 import type { Session } from '@/lib/training';
 
-export default function ProgressChart({sessions,id,days}:{sessions:Session[];id:string;days:number}) {
+export default function ProgressChart({sessions,id,days,assistance=false,weightHint}:{sessions:Session[];id:string;days:number;assistance?:boolean;weightHint?:string}) {
   const [metric,setMetric] = useState<ProgressMetric>('volume');
   const [inspectedId,setInspectedId] = useState<string | null>(null);
-  const points = progressPoints(sessions,id,days,Date.now());
+  const points = progressPoints(sessions,id,days,Date.now(),assistance);
   const index = Math.max(0,inspectedId && points.some(p => p.id === inspectedId) ? points.findIndex(p => p.id === inspectedId) : points.length-1);
   const point = points[index];
   const previous = points[index-1];
   const change = previous && point ? relativeChange(point[metric],previous[metric]) : null;
-  const unit = metric === 'reps' ? 'reps' : metric === 'volume' ? 'kg lifted' : 'kg';
-  const metricName = metric === 'volume' ? 'Training volume' : metric === 'weight' ? 'Heaviest set' : 'Highest rep count';
-  const description = metric === 'volume' ? 'Weight × reps, added across every saved set.' : metric === 'weight' ? 'The highest weight you logged in each session.' : 'The highest rep count you logged in one set per session.';
+  const unit = metric === 'reps' ? 'reps' : metric === 'volume' ? assistance ? 'kg x reps' : 'kg lifted' : assistance ? 'kg assistance' : 'kg';
+  const metricName = metric === 'volume' ? assistance ? 'Assistance x reps' : 'Training volume' : metric === 'weight' ? assistance ? 'Lowest assistance' : 'Heaviest set' : 'Highest rep count';
+  const description = assistance && metric !== 'reps' ? 'Lower assistance makes the exercise harder. Assistance times reps records your settings, not weight lifted.' : metric === 'volume' ? 'Weight × reps, added across every saved set.' : metric === 'weight' ? 'The highest weight you logged in each session.' : 'The highest rep count you logged in one set per session.';
   const desiredStep = Math.max(1,...points.map(p => p[metric])) * 1.05 / 3;
   const magnitude = 10 ** Math.floor(Math.log10(desiredStep));
   const step = ([1,2,2.5,5,10].find(n => n >= desiredStep / magnitude) ?? 10) * magnitude;
@@ -43,9 +43,10 @@ export default function ProgressChart({sessions,id,days}:{sessions:Session[];id:
         </g>)}
       </svg></div>
       <div className="chart-session-controls"><button className="icon-button" aria-label="Previous chart session" disabled={index===0} onClick={()=>setInspectedId(points[index-1].id)}><ArrowLeft size={18}/></button><p>Session {index+1} of {points.length}{point.ongoing?' · in progress':''}</p><button className="icon-button" aria-label="Next chart session" disabled={index===points.length-1} onClick={()=>setInspectedId(points[index+1].id)}><ArrowRight size={18}/></button></div>
-      <div className="volume-breakdown" aria-label="Selected session breakdown"><div><span>Sets</span><strong>{point.sets}</strong></div><div><span>Total reps</span><strong>{point.totalReps}</strong></div><div><span>Average weight</span><strong>{formatNumber(point.averageWeight)}<small> kg</small></strong></div></div>
+      <div className="volume-breakdown" aria-label="Selected session breakdown"><div><span>Sets</span><strong>{point.sets}</strong></div><div><span>Total reps</span><strong>{point.totalReps}</strong></div><div><span>{assistance?'Average assistance':'Average weight'}</span><strong>{formatNumber(point.averageWeight)}<small> kg</small></strong></div></div>
     </>}
     {points.length>0&&<p className="chart-note">Each point is one session on this machine. Tap a point or use the arrows to explore.</p>}
-    {metric==='volume'&&<details className="volume-explainer"><summary>How the overview works</summary><p>50 kg × 10 reps × 3 sets = 1,500 kg lifted. When your sets differ, we add each set’s weight × reps.</p><p>More volume means more work logged, not necessarily more strength. Compare the same machine with similar technique.{point?.volume===0?' For zero-weight sets, use the Reps view.':''}</p></details>}
+    {weightHint&&<p className="chart-note">Logging convention: {weightHint}</p>}
+    {metric==='volume'&&!assistance&&<details className="volume-explainer"><summary>How the overview works</summary><p>50 kg × 10 reps × 3 sets = 1,500 kg lifted. When your sets differ, we add each set’s weight × reps.</p><p>More volume means more work logged, not necessarily more strength. Compare the same machine with similar technique.{point?.volume===0?' For zero-weight sets, use the Reps view.':''}</p></details>}
   </>;
 }
