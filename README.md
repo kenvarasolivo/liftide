@@ -9,16 +9,14 @@ npm install
 npm run dev
 ```
 
-Open http://127.0.0.1:3000. `npm run build` produces a static export in `out/`.
+Open http://127.0.0.1:3000. Build with `npm run build`, then use `npm start` or deploy the Next.js app to Vercel. Neon auth and database APIs require a server runtime; static `out/` hosting is no longer used.
 
 ## Install and use offline
 
-Deploy `out/` at the root of an HTTPS static host. The build generates a versioned
-`sw.js` from the exported files, including both pages, Next.js chunks and equipment
-images. Service workers are disabled in development; test a production export on
-localhost or HTTPS. Serve `/sw.js` as JavaScript with `Cache-Control: no-cache`;
-serve `/manifest.webmanifest` as `application/manifest+json`. Configure the host
-to resolve `/train` to `/train.html` (and `/` to `/index.html`).
+The build generates `public/sw.js` from public assets and Next.js browser chunks.
+Deploy the Next.js app on an HTTPS server host. Service workers are disabled in
+development; test with `npm run build` and `npm start` on localhost or HTTPS.
+The worker caches public page shells and equipment, never auth or training APIs.
 
 Use the browser's Install option, the in-app Install button when available, or
 Share → Add to Home Screen on iOS. The installed app opens directly to `/train`.
@@ -29,12 +27,24 @@ Clearing browser site data removes the offline cache and local training data.
 
 New builds download in the background. An Update app banner lets you choose when
 to reload; updates also activate once all existing app tabs have closed. A failed
-download keeps the previous offline version. Validate by serving `out/`, opening
+download keeps the previous offline version. Validate by running a production server, opening
 the app online, waiting for the worker to activate, then disabling the network
 and reloading `/train`. Also check navigation from `/` to `/train` while offline.
 
 PWA files: `app/manifest.ts`, `components/pwa-controls.tsx`,
 `scripts/build-pwa.mjs`, `scripts/service-worker.js`, and `public/icons/`.
+
+## Accounts and Neon
+
+Login, create-account, confirmation, password reset and account pages use managed
+Neon Auth; training data is stored in Neon Postgres through server-only APIs.
+Copy `.env.example` to `.env.local` or `.env` when your project is ready. Set
+`DATABASE_URL`, `NEON_AUTH_BASE_URL` and `NEON_AUTH_COOKIE_SECRET`, then run the
+Neon SQL migration. See [neon/README.md](neon/README.md) for complete setup.
+Without credentials, the app continues in device-only mode. All credentials are
+server-only. Signed-in training has private per-user records and separate offline
+caches. Photos stay device-only. Guest workouts are not uploaded automatically;
+the Account page can copy them into an empty account.
 
 ## Included
 

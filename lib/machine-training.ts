@@ -1,4 +1,4 @@
-import { exercises, type Exercise, type Muscle, type Session, totalSets } from './training';
+import { allMuscles, exercises, type Exercise, type Muscle, type Session, totalSets } from './training';
 import { equipmentPhotos } from './equipment-photos';
 
 export type CustomMachine = Exercise & { photoId: string };
@@ -49,14 +49,30 @@ export function getDraft(data: TrainingData, e: Exercise): Draft {
 function validSession(value: unknown): value is Session {
   if (!value || typeof value !== 'object') return false;
   const s = value as Session;
-  return typeof s.id === 'string' && Number.isFinite(s.started) && !!s.sets && typeof s.sets === 'object' && Object.values(s.sets).every(sets => Array.isArray(sets) && sets.every(x => Number.isFinite(x.weight) && x.weight >= 0 && Number.isFinite(x.reps) && x.reps >= 0 && typeof x.done === 'boolean'));
+  return typeof s.id === 'string' && typeof s.routine === 'string' && Number.isFinite(s.started) && record(s.sets) && Object.values(s.sets).every(sets => Array.isArray(sets) && sets.every(x => x && Number.isFinite(x.weight) && x.weight >= 0 && Number.isFinite(x.reps) && x.reps >= 0 && typeof x.done === 'boolean'));
+}
+function record(value: unknown): value is Record<string, unknown> { return Boolean(value && typeof value === 'object' && !Array.isArray(value)); }
+function muscles(value: unknown): value is Muscle[] { return Array.isArray(value) && value.every(m => allMuscles.includes(m)); }
+export function parseTraining(value: unknown): TrainingData {
+  const saved = value as TrainingData;
+  const invalid = () => { throw new Error('Invalid workout data'); };
+  if (!record(saved) || saved.version !== 2 || !Array.isArray(saved.history) || !saved.history.every(validSession) || (saved.current && !validSession(saved.current))) invalid();
+  for (const key of ['drafts','setups','labels','restPreferences','muscleTargets'] as const) if(saved[key] !== undefined && !record(saved[key])) invalid();
+  if (saved.name !== undefined && typeof saved.name !== 'string') invalid();
+  if (saved.selectedId !== undefined && saved.selectedId !== null && typeof saved.selectedId !== 'string') invalid();
+  if (saved.favorites !== undefined && (!Array.isArray(saved.favorites) || !saved.favorites.every(id => typeof id === 'string'))) invalid();
+  if (saved.customMachines !== undefined && (!Array.isArray(saved.customMachines) || !saved.customMachines.every(e => e && typeof e.id === 'string' && typeof e.name === 'string' && typeof e.setup === 'string' && typeof e.photoId === 'string' && muscles(e.muscles) && e.muscles.length > 0 && muscles(e.secondary) && Number.isFinite(e.weight) && Number.isFinite(e.reps) && Number.isFinite(e.rest) && e.rest > 0))) invalid();
+  if (saved.drafts && !Object.values(saved.drafts).every(d => d && typeof d.weight === 'string' && typeof d.reps === 'string')) invalid();
+  for (const key of ['setups','labels'] as const) if (saved[key] && !Object.values(saved[key]).every(v => typeof v === 'string')) invalid();
+  if (saved.restPreferences && !Object.values(saved.restPreferences).every(v => Number.isFinite(v) && v > 0)) invalid();
+  if (saved.muscleTargets && !Object.values(saved.muscleTargets).every(v => v && muscles(v.muscles) && v.muscles.length > 0 && muscles(v.secondary))) invalid();
+  if (saved.rest && !(typeof saved.rest.exerciseId === 'string' && Number.isFinite(saved.rest.duration) && saved.rest.duration > 0 && (saved.rest.endAt === null || Number.isFinite(saved.rest.endAt)) && (saved.rest.paused === null || Number.isFinite(saved.rest.paused)) && typeof saved.rest.complete === 'boolean')) invalid();
+  return { ...emptyData, ...saved };
 }
 export function readTraining(): TrainingData {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (raw) {
-    const saved = JSON.parse(raw) as TrainingData;
-    if (saved.version !== 2 || !Array.isArray(saved.history) || !saved.history.every(validSession) || (saved.current && !validSession(saved.current))) throw new Error('Invalid workout data');
-    return { ...emptyData, ...saved };
+    return parseTraining(JSON.parse(raw));
   }
   const legacy = localStorage.getItem('liftide-v1');
   if (!legacy) return { ...emptyData };

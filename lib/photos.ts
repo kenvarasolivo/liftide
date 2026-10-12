@@ -6,23 +6,24 @@ function openDatabase(): Promise<IDBDatabase> {
     request.onerror = () => reject(request.error);
   });
 }
-export async function loadPhotos(): Promise<Record<string,string>> {
+export async function loadPhotos(scope = ''): Promise<Record<string,string>> {
   const db = await openDatabase();
   return new Promise((resolve,reject) => {
     const transaction = db.transaction('photos','readonly');
     const photos: Record<string,string> = {};
     const cursor = transaction.objectStore('photos').openCursor();
-    cursor.onsuccess = () => { const item = cursor.result; if(item) { photos[String(item.key)] = item.value; item.continue(); } };
+    cursor.onsuccess = () => { const item = cursor.result; if(item) { const key = String(item.key); const prefix = `account:${scope}:`; if(scope ? key.startsWith(prefix) : !key.startsWith('account:')) photos[scope ? key.slice(prefix.length) : key] = item.value; item.continue(); } };
     transaction.oncomplete = () => { db.close(); resolve(photos); };
     transaction.onerror = () => { db.close(); reject(transaction.error); };
   });
 }
-export async function storePhoto(id:string, photo:string | null) {
+export async function storePhoto(id:string, photo:string | null, scope = '') {
   const db = await openDatabase();
   return new Promise<void>((resolve,reject) => {
     const transaction = db.transaction('photos','readwrite');
     const store = transaction.objectStore('photos');
-    if(photo === null) store.delete(id); else store.put(photo,id);
+    const key = scope ? `account:${scope}:${id}` : id;
+    if(photo === null) store.delete(key); else store.put(photo,key);
     transaction.oncomplete = () => { db.close(); resolve(); };
     transaction.onerror = () => { db.close(); reject(transaction.error); };
   });
