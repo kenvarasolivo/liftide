@@ -1,6 +1,6 @@
 import { emptyData, parseTraining, STORAGE_KEY, type TrainingData } from './machine-training';
 
-export type SyncStatus = 'device' | 'loading' | 'syncing' | 'synced' | 'offline' | 'conflict' | 'error';
+export type SyncStatus = 'preview' | 'loading' | 'syncing' | 'synced' | 'offline' | 'conflict' | 'error';
 export type TrainingSnapshot = { data: TrainingData; loaded: boolean; canSave: boolean; status: SyncStatus; message: string };
 type Cache = { data: TrainingData; revision: number; dirty: boolean };
 class CacheError extends Error {}
@@ -15,7 +15,7 @@ export class TrainingSync {
   private running = false;
   private disposed = false;
   private timer: ReturnType<typeof setTimeout> | undefined;
-  constructor(private key: string, private storage: Pick<Storage, 'getItem' | 'setItem'>, private guestLoad: () => TrainingData, private remote: TrainingRemote | null, private emit: (snapshot: TrainingSnapshot) => void) {}
+  constructor(private key: string, private storage: Pick<Storage, 'getItem' | 'setItem'>, private remote: TrainingRemote | null, private emit: (snapshot: TrainingSnapshot) => void) {}
 
   private publish(update: Partial<TrainingSnapshot>) {
     if (this.disposed) return;
@@ -23,10 +23,16 @@ export class TrainingSync {
     this.emit(this.snapshot);
   }
   private persist() {
-    try { this.storage.setItem(this.key, JSON.stringify(this.remote ? this.cache : this.cache.data)); }
+    if (!this.remote) return;
+    try { this.storage.setItem(this.key, JSON.stringify(this.cache)); }
     catch { throw new CacheError('Could not save the local cache'); }
   }
   async start() {
+    if (!this.remote) {
+      this.cache.data = structuredClone(emptyData);
+      this.publish({ data: this.cache.data, loaded: true, canSave: false, status: 'preview' });
+      return;
+    }
     try {
       if (this.remote) {
         const raw = this.storage.getItem(this.key);
@@ -35,22 +41,31 @@ export class TrainingSync {
           if (!Number.isSafeInteger(cached.revision) || cached.revision < 0 || typeof cached.dirty !== 'boolean') throw new Error('Invalid cache');
           this.cache = { ...cached, data: parseTraining(cached.data) };
         }
-      } else this.cache.data = this.guestLoad();
-      this.publish({ data: this.cache.data, loaded: true, status: this.remote ? 'loading' : 'device' });
+      }
+      this.publish({ data: this.cache.data, loaded: true, status: 'loading' });
     } catch {
       this.publish({ loaded: true, canSave: false, status: 'error', message: 'Saved data could not be loaded. Your previous storage has been kept.' });
       return;
     }
-    if (this.remote) await this.sync();
+    await this.sync();
   }
   update(updater: TrainingData | ((data: TrainingData) => TrainingData)) {
-    if (!this.snapshot.loaded || !this.snapshot.canSave || this.disposed) return;
+    if (!this.snapshot.loaded || this.disposed) return;
+    if (!this.remote) {
+      // Guests can inspect equipment and try the inputs. Personal training
+      // fields are rejected, and preview state never touches browser storage.
+      const next = typeof updater === 'function' ? updater(this.cache.data) : updater;
+      this.cache.data = { ...this.cache.data, selectedId: next.selectedId, drafts: next.drafts };
+      this.publish({ data: this.cache.data });
+      return;
+    }
+    if (!this.snapshot.canSave) return;
     const next = typeof updater === 'function' ? updater(this.cache.data) : updater;
     if (JSON.stringify(next) === JSON.stringify(this.cache.data)) return;
     this.cache = { ...this.cache, data: next, dirty: Boolean(this.remote) };
     try { this.persist(); }
     catch { this.publish({ data: next, canSave: false, status: 'error', message: 'Your browser could not save this change. Export your data to keep a copy.' }); return; }
-    this.publish({ data: next, status: this.snapshot.status === 'conflict' ? 'conflict' : this.remote ? 'syncing' : 'device' });
+    this.publish({ data: next, status: this.snapshot.status === 'conflict' ? 'conflict' : 'syncing' });
     if (this.remote && this.snapshot.status !== 'conflict') {
       clearTimeout(this.timer);
       this.timer = setTimeout(() => void this.sync(), 800);

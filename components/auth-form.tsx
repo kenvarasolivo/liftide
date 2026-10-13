@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Brand from '@/components/brand';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
@@ -58,8 +59,8 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     finally { setBusy(false); }
   }
 
-  return <div className="auth-page"><div className="auth-visual"><Link className="auth-brand" href="/">liftide<span>.</span></Link><div><span className="eyebrow">ONE SET AT A TIME</span><h2>Your pace.<br/>Your progress.</h2><p>Show up for yourself.<br/>We’ll keep the record.</p></div></div><main className="auth-main"><Link className="auth-back" href="/"><ArrowLeft size={16}/>Back to Liftide</Link><div className="auth-card"><span className="eyebrow">{content.eyebrow}</span><h1>{content.title}</h1><p className="auth-description">{content.text}</p>
-    {!auth.configured && <div className="auth-notice" role="status">Account sign-in will be available soon. You can still train and save your workouts on this device.</div>}
+  return <div className="auth-page"><div className="auth-visual"><Brand className="auth-brand"/><div><span className="eyebrow">ONE SET AT A TIME</span><h2>Your pace.<br/>Your progress.</h2><p>Show up for yourself.<br/>We’ll keep the record.</p></div></div><main className="auth-main"><Link className="auth-back" href="/"><ArrowLeft size={16}/>Back to Liftide</Link><div className="auth-card"><span className="eyebrow">{content.eyebrow}</span><h1>{content.title}</h1><p className="auth-description">{content.text}</p>
+    {!auth.configured && <div className="auth-notice" role="status">Account sign-in is currently unavailable. You can browse exercises; saving requires an account.</div>}
     {auth.error && <p className="auth-error" role="alert">{auth.error}</p>}
     {success ? <div className="auth-success" role="status"><CheckCircle2 size={30}/><h2>{mode === 'reset' ? 'You’re all set.' : 'Check your inbox.'}</h2><p>{success}</p><Link className="primary-button" href={mode === 'reset' && auth.user ? '/train' : '/login'}>{mode === 'reset' && auth.user ? 'Back to training' : 'Back to login'}<ArrowRight size={18}/></Link></div> : auth.user && (mode === 'login' || mode === 'signup') ? <div className="auth-success"><p>You’re signed in as {auth.user.email}.</p><Link className="primary-button" href="/train">Continue training<ArrowRight size={18}/></Link><Link className="auth-inline-link" href="/account">Manage account</Link></div> : <form onSubmit={submit}>
       {mode === 'signup' && <label className="auth-field" htmlFor="auth-name">Your name<input id="auth-name" name="name" autoComplete="name" value={name} onChange={e => setName(e.target.value)} maxLength={30} placeholder="What should we call you?" required disabled={busy}/></label>}
@@ -71,6 +72,6 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       {error && <p className="auth-error" role="alert">{error}</p>}
       <button className="primary-button auth-submit" type="submit" disabled={busy || auth.loading || !auth.configured || (mode === 'reset' && !auth.user && !resetToken)}>{busy ? 'Please wait…' : content.action}<ArrowRight size={18}/></button>
     </form>}
-    <p className="auth-switch">{mode === 'login' ? <>New here? <Link href="/signup">Create an account</Link></> : mode === 'signup' ? <>Already have an account? <Link href="/login">Log in</Link></> : <Link href="/login">Back to login</Link>}</p><div className="auth-divider"><span>or keep it simple</span></div><Link className="secondary-button auth-guest" href="/train">Continue on this device<ArrowRight size={17}/></Link><p className="auth-privacy"><ShieldCheck size={15}/>Your workouts stay yours.</p>
+    <p className="auth-switch">{mode === 'login' ? <>New here? <Link href="/signup">Create an account</Link></> : mode === 'signup' ? <>Already have an account? <Link href="/login">Log in</Link></> : <Link href="/login">Back to login</Link>}</p><div className="auth-divider"><span>or explore first</span></div><Link className="secondary-button auth-guest" href="/train">Browse exercises<ArrowRight size={17}/></Link><p className="auth-privacy"><ShieldCheck size={15}/>Your workouts stay yours.</p>
   </div></main></div>;
 }

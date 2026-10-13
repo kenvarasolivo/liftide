@@ -30,7 +30,7 @@ const additions: Array<[string, string, Muscle[], Muscle[], EquipmentType, strin
  ['barbell-row','Barbell bent-over row',['Upper back'],['Lats','Biceps','Lower back'],'Free weights','barbell',120,'Choose a controlled hinge position and comfortable grip.','Log total weight, including the bar and all plates.'],
  ['dumbbell-row','Single-arm dumbbell row',['Lats'],['Upper back','Biceps'],'Free weights','dumbbell',90,'Support one hand on a bench and train both sides.','Log one dumbbell’s weight and reps per side.'],
  ['back-extension','Back extension',['Lower back'],['Glutes','Hamstrings'],'Bodyweight','extension',90,'Set the hip pad below your hip crease.','Log 0 kg for bodyweight, or only the extra weight you hold.'],
- ['reverse-fly','Reverse pec deck',['Shoulders'],['Upper back'],'Machines','fly',90,'Face the pad and adjust handles to shoulder height.','Log the weight shown on the stack.'],
+ ['reverse-fly','Reverse pec deck fly',['Upper back','Shoulders'],[],'Machines','fly',90,'Face the pad and adjust handles to shoulder height.','Log the weight shown on the stack.'],
  ['lateral-raise','Dumbbell lateral raise',['Shoulders'],[],'Free weights','dumbbell',90,'Use a comfortable stance and slightly bent elbows.','Log the weight of one dumbbell; reps are per arm.'],
  ['dumbbell-shoulder','Dumbbell shoulder press',['Shoulders'],['Triceps'],'Free weights','dumbbell',120,'Use a bench with a supported upright backrest.','Log the weight of one dumbbell; reps are per arm.'],
  ['face-pull','Cable face pull',['Shoulders'],['Upper back'],'Machines','cable',90,'Attach a rope and set the pulley near face height.','Log the weight shown on the stack.'],

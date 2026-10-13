@@ -21,8 +21,9 @@ The worker caches public page shells and equipment, never auth or training APIs.
 Use the browser's Install option, the in-app Install button when available, or
 Share → Add to Home Screen on iOS. The installed app opens directly to `/train`.
 After the first successful online load and service-worker installation, both
-pages, workout logging, timers, history and equipment work offline. Workouts and
-personal photos continue to save in local storage and IndexedDB on that device.
+pages and equipment work offline. Previously signed-in users can also log
+workouts, use timers and view history offline. Guests can browse but cannot save.
+Signed-in workouts keep a local cache; account photos use scoped IndexedDB storage.
 Clearing browser site data removes the offline cache and local training data.
 
 New builds download in the background. An Update app banner lets you choose when
@@ -41,10 +42,10 @@ Neon Auth; training data is stored in Neon Postgres through server-only APIs.
 Copy `.env.example` to `.env.local` or `.env` when your project is ready. Set
 `DATABASE_URL`, `NEON_AUTH_BASE_URL` and `NEON_AUTH_COOKIE_SECRET`, then run the
 Neon SQL migration. See [neon/README.md](neon/README.md) for complete setup.
-Without credentials, the app continues in device-only mode. All credentials are
+Without credentials, the app remains in preview mode; saving requires login. All credentials are
 server-only. Signed-in training has private per-user records and separate offline
-caches. Photos stay device-only. Guest workouts are not uploaded automatically;
-the Account page can copy them into an empty account.
+caches. Photos stay device-only. Guests cannot save training or photos. Legacy device-only records are preserved;
+a signed-in user can copy them into an empty account from the Account page.
 
 ## Included
 
@@ -60,9 +61,9 @@ the Account page can copy them into an empty account.
 - Weight-entry guidance for the added exercises, including per-dumbbell, total-barbell, bodyweight and assistance conventions. Assisted-exercise charts show lowest assistance rather than highest weight.
 - A responsive landing page at `/`, with the workout app at `/train`.
 - Responsive desktop and mobile layouts, accessible dialogs and keyboard-selectable muscles.
-- Browser-local persistence and JSON export. Existing Liftide v1 history and completed sets migrate without changing the original storage. New users start with an empty log; earlier sample data remains labeled and removable in Settings.
+- Login-required persistence and JSON export, with private account sync and offline caches. Guests have transient exercise previews only. Legacy local records remain untouched and can be recovered after login.
 
-This version saves training in local storage and photos in IndexedDB on the current browser and device. JSON export includes training, custom machines and setup notes; photo files remain on the device. The body map shows exercise targets and logged coverage, not recovery or a prescription. Machine setups and starting weights are examples to customize.
+Saving requires login. Training syncs to the account with a browser-local cache; photos remain in account-scoped IndexedDB on the current device. JSON export includes training, custom machines and setup notes; photo files remain on the device. The body map shows exercise targets and logged coverage, not recovery or a prescription. Machine setups and starting weights are examples to customize.
 
 ## Structure
 

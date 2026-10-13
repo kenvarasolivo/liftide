@@ -7,6 +7,7 @@ function openDatabase(): Promise<IDBDatabase> {
   });
 }
 export async function loadPhotos(scope = ''): Promise<Record<string,string>> {
+  if (!scope) return {};
   const db = await openDatabase();
   return new Promise((resolve,reject) => {
     const transaction = db.transaction('photos','readonly');
@@ -18,6 +19,7 @@ export async function loadPhotos(scope = ''): Promise<Record<string,string>> {
   });
 }
 export async function storePhoto(id:string, photo:string | null, scope = '') {
+  if (!scope) throw new Error('Log in to save equipment photos.');
   const db = await openDatabase();
   return new Promise<void>((resolve,reject) => {
     const transaction = db.transaction('photos','readwrite');

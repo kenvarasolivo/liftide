@@ -1,0 +1,109 @@
+/* Shared identity and finishing touches across every route. */
+.liftide-brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-1.3px;flex-shrink:0}
+.liftide-brand .brand-symbol{width:40px;height:40px;color:var(--amber)}
+.liftide-brand .brand-word{color:var(--text)}
+.liftide-brand .brand-dot{color:var(--amber)}
+.liftide-brand:hover .brand-symbol{color:#f4caa5}
+.sidebar .brand{margin-inline:6px;font-size:32px;gap:9px}
+.mobile-brand{display:none}
+.page-footer .liftide-brand{font-size:20px}
+.page-footer .liftide-brand .brand-symbol{width:28px;height:28px}
+.store-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:100dvh;margin:0;padding:24px;text-align:center}
+.store-loading .brand-symbol{width:48px;height:48px;color:var(--amber)}
+.skip-link{position:fixed;top:10px;left:10px;z-index:200;background:var(--amber);color:var(--bg);padding:12px 18px;border-radius:12px;transform:translateY(-150%)}
+.skip-link:focus{transform:translateY(0)}
+.training-save-status{display:flex;align-items:center;gap:8px;color:#b6b1aa;font-size:12px;margin:0 0 19px;line-height:1.6}
+.training-save-status>svg{color:#cfaa88}
+.training-save-status button,.training-save-status>a{display:inline-flex;align-items:center;gap:3px;color:var(--amber);min-height:36px;margin-left:auto;padding:4px 0 4px 10px}
+.training-save-status.save-error{color:#f2b2a2}
+.settings-home{display:inline-flex;gap:10px}
+.active-session{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;margin-top:18px;background:#e6b18208;border:1px solid #5a4432;border-radius:18px}
+.active-session strong{display:block;font-size:20px;margin-top:4px;color:#ebc09c}
+.active-session p{color:var(--muted);font-size:13px;margin-top:5px}
+.active-session .secondary-button{white-space:nowrap}
+.topbar .account-link{border:1px solid var(--line);padding:0 13px;border-radius:12px}
+.topbar .header-settings{border-radius:12px}
+.search-field:focus-within{border-color:var(--amber);box-shadow:0 0 0 3px #e6b18215}
+.machine-card{transition:transform .18s ease,border-color .18s ease;overflow:hidden}
+.machine-card:focus-within{border-color:#b68d68}
+.machine-card-main{text-align:left}
+.machine-card-copy>p{min-height:2.8em}
+.category-filters button,.favorites-filter,.favorite-button,.icon-button,.toast>button,.back-button,.quiet-button{min-height:44px}
+.favorite-button{min-width:44px}
+.dialog-top{position:sticky;top:0;background:#1d1f20;z-index:2;padding-block:5px}
+.dialog-top .icon-button{min-width:44px}
+.rest-dial strong,.session-status,.logged-set>strong,.finish-stats strong{font-variant-numeric:tabular-nums}
+.set-field input{scroll-margin-block:100px}
+.auth-page{min-height:100dvh}
+.auth-field input{font-size:16px}
+.account-email{overflow-wrap:anywhere}
+.landing-faq summary{min-height:56px}
+@media(hover:hover){.machine-card:hover{transform:translateY(-3px);border-color:#6d5541}.secondary-button:hover{border-color:#ad8460}.nav-item:hover svg{color:var(--amber)}}
+@media(max-width:1020px) and (min-width:601px){.sidebar .brand{margin-inline:9px}.sidebar .liftide-brand .brand-word{display:none}}
+@media(max-width:600px){
+  html{scroll-padding-top:82px}
+  .app-shell>main{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+  .sidebar{height:calc(74px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
+  .sidebar nav{height:74px}
+  .topbar{height:auto;min-height:70px;position:sticky;top:0;z-index:25;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;background:#111213ed;backdrop-filter:blur(18px);gap:8px}
+  .topbar .mobile-brand{display:inline-flex;min-width:44px;min-height:44px;justify-content:center}
+  .topbar .mobile-brand .brand-symbol{width:38px;height:38px}
+  .topbar .topbar-context{display:none}
+  .topbar>div{gap:8px;min-width:0}
+  .topbar .header-settings{height:44px;width:44px}
+  .topbar .account-link{font-size:12px;padding-inline:10px;white-space:nowrap}
+  .topbar .session-status{min-height:44px;font-size:11px;padding-inline:10px;gap:5px}
+  .topbar .session-name{display:none}
+  .topbar .session-status:has(.session-name)::after{content:'· Finish'}
+  .training-save-status{font-size:11px;gap:6px;margin-bottom:14px}
+  .training-save-status>span{max-width:250px}
+  .main-content{padding-top:12px}
+  .active-session{padding:15px;gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .active-session .eyebrow{font-size:9px}
+  .active-session strong{font-size:18px}
+  .active-session p{font-size:12px}
+  .active-session .secondary-button{min-height:44px;font-size:12px}
+  .machine-grid{gap:12px}
+  .machine-card{border-radius:18px}
+  .machine-card-copy{padding:14px 12px}
+  .machine-card-copy h3{font-size:16px;line-height:1.4;min-height:2.8em;overflow-wrap:anywhere}
+  .machine-card-copy>p{font-size:11px;line-height:1.6;margin-top:5px}
+  .machine-photo{aspect-ratio:1.35}
+  .machine-card-action{font-size:13px}
+  .machine-progress{padding:11px 12px;font-size:12px;min-height:48px}
+  .category-filters{scrollbar-width:none;scroll-snap-type:x proximity;padding-bottom:5px}
+  .category-filters::-webkit-scrollbar{display:none}
+  .category-filters button{scroll-snap-align:start;min-height:44px}
+  .search-field input{font-size:16px}
+  .favorites-filter{min-width:44px;padding-inline:12px;font-size:0;gap:0}
+  .favorites-filter svg{width:20px;height:20px}
+  .section-heading{align-items:flex-start}
+  .section-heading .secondary-button{white-space:nowrap;margin-top:4px}
+  .number-steppers button{min-height:48px}
+  .selected-machine-copy{min-width:0}
+  .selected-machine-copy h1{overflow-wrap:anywhere}
+  .photo-replace{min-height:36px}
+  .dialog{width:calc(100% - 16px);max-height:calc(100dvh - 24px);border-radius:22px}
+  .dialog-content{padding:16px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(90px + env(safe-area-inset-bottom,0px));padding:10px 12px;gap:9px}
+  .toast>button{min-width:44px}
+  .floating-rest{bottom:calc(90px + env(safe-area-inset-bottom,0px));right:16px}
+  .app-shell:has(.floating-rest) .toast{bottom:calc(164px + env(safe-area-inset-bottom,0px))}
+  .auth-main{padding-inline:22px;padding-bottom:calc(35px + env(safe-area-inset-bottom,0px))}
+  .auth-visual{padding-top:calc(18px + env(safe-area-inset-top,0px))}
+  .auth-brand.liftide-brand{font-size:28px}
+  .landing-nav{gap:12px;flex-wrap:wrap}
+  .landing-nav .landing-brand{font-size:26px;gap:7px}
+  .landing-nav .landing-brand .brand-symbol{width:33px;height:33px}
+  .landing-nav nav{gap:12px;margin-left:auto}
+  .landing-nav .landing-open{font-size:12px;padding:10px 12px;min-height:44px}
+  .landing-nav .landing-login{min-height:44px;align-items:center}
+  .landing-hero h1{font-size:clamp(54px,15vw,72px)}
+  .landing-privacy{align-items:flex-start;max-width:290px;line-height:1.8}
+  .account-page{padding:24px 18px calc(40px + env(safe-area-inset-bottom,0px))}
+}
+@media(max-width:360px){.topbar{padding-inline:12px}.topbar>div{gap:6px}.topbar .session-status{padding-inline:8px}.topbar .account-link{padding-inline:8px}.landing-nav nav{width:100%;justify-content:space-between}.training-save-status>span{max-width:210px}}
+@media(prefers-reduced-motion:reduce){.machine-card{transition:none}.machine-card:hover{transform:none}}
+
+.brand-symbol{object-fit:contain;flex-shrink:0}.sidebar .brand>.brand-symbol{width:40px;height:40px}.note-mark .brand-symbol{width:100%;height:100%}
+@media(max-width:1020px) and (min-width:601px){.sidebar .brand>.brand-symbol{width:32px;height:32px}}
