@@ -1,6 +1,14 @@
 # Liftide logo
 
-Generated with the built-in ImageGen tool. The original transparent raster mark is saved as `public/icons/liftide-mark.png`. `scripts/build-icons.py` packages it into browser and install icons and a small transparent `public/icons/liftide-mark.webp` for page headers without redrawing the design.
+Generated with the built-in ImageGen tool. The original transparent raster mark is saved as `public/icons/liftide-mark.png`. Run `python scripts/build-icons.py` (requires Pillow) to package that original mark without redrawing it:
+
+- `public/icons/liftide-logo.webp`: transparent website mark.
+- `public/icons/liftide.ico` and `liftide-32.png`: browser favicons.
+- `public/icons/liftide-192.png` and `liftide-512.png`: PWA install icons.
+- `public/icons/liftide-maskable-512.png`: launcher icon with mask-safe padding.
+- `public/icons/liftide-apple-touch.png`: iPhone and iPad home-screen icon.
+
+All opaque icons use the app's near-black background. Website metadata in `app/layout.tsx` and the manifest in `lib/app-manifest.ts` reference these assets. Rebuild the app after regeneration to refresh the service-worker cache.
 
 ## Final prompt
 

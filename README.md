@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Open http://127.0.0.1:3000. Build with `npm run build`, then use `npm start` or deploy the Next.js app to Vercel. Neon auth and database APIs require a server runtime; static `out/` hosting is no longer used.
+Open http://localhost:3000. Neon Auth accepts localhost for local sign-in; authentication pages opened through 127.0.0.1 redirect to localhost in development. Build with `npm run build`, then use `npm start` or deploy the Next.js app to Vercel. Neon auth and database APIs require a server runtime; static `out/` hosting is no longer used.
 
 ## Install and use offline
 

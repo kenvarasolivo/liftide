@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 127.0.0.1",
+    "dev": "next dev --hostname localhost",
     "build": "next build && node scripts/build-pwa.mjs",
     "start": "next start",
     "check": "tsc --noEmit",
-    "test": "node --test scripts/test-training-sync.cjs scripts/test-neon-api.cjs"
+    "test": "node --test scripts/test-training-sync.cjs scripts/test-neon-api.cjs scripts/test-training-share.cjs"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",

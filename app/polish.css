@@ -1,31 +1,46 @@
 /* Shared identity and finishing touches across every route. */
 .liftide-brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-1.3px;flex-shrink:0}
-.liftide-brand .brand-symbol{width:40px;height:40px;color:var(--amber)}
+.liftide-brand .brand-symbol{width:40px;height:40px;color:var(--accent)}
 .liftide-brand .brand-word{color:var(--text)}
-.liftide-brand .brand-dot{color:var(--amber)}
-.liftide-brand:hover .brand-symbol{color:#f4caa5}
+.liftide-brand .brand-dot{color:var(--accent)}
+.liftide-brand:hover .brand-symbol{color:#f4f4f4}
 .sidebar .brand{margin-inline:6px;font-size:32px;gap:9px}
 .mobile-brand{display:none}
 .page-footer .liftide-brand{font-size:20px}
 .page-footer .liftide-brand .brand-symbol{width:28px;height:28px}
 .store-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:100dvh;margin:0;padding:24px;text-align:center}
-.store-loading .brand-symbol{width:48px;height:48px;color:var(--amber)}
-.skip-link{position:fixed;top:10px;left:10px;z-index:200;background:var(--amber);color:var(--bg);padding:12px 18px;border-radius:12px;transform:translateY(-150%)}
+.store-loading .brand-symbol{width:48px;height:48px;color:var(--accent)}
+.skip-link{position:fixed;top:10px;left:10px;z-index:200;background:var(--accent);color:var(--bg);padding:12px 18px;border-radius:12px;transform:translateY(-150%)}
 .skip-link:focus{transform:translateY(0)}
 .training-save-status{display:flex;align-items:center;gap:8px;color:#b6b1aa;font-size:12px;margin:0 0 19px;line-height:1.6}
-.training-save-status>svg{color:#cfaa88}
-.training-save-status button,.training-save-status>a{display:inline-flex;align-items:center;gap:3px;color:var(--amber);min-height:36px;margin-left:auto;padding:4px 0 4px 10px}
+.training-save-status>svg{color:#cfcfcf}
+.training-save-status button,.training-save-status>a{display:inline-flex;align-items:center;gap:3px;color:var(--accent);min-height:36px;margin-left:auto;padding:4px 0 4px 10px}
 .training-save-status.save-error{color:#f2b2a2}
 .settings-home{display:inline-flex;gap:10px}
-.active-session{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;margin-top:18px;background:#e6b18208;border:1px solid #5a4432;border-radius:18px}
-.active-session strong{display:block;font-size:20px;margin-top:4px;color:#ebc09c}
+.active-session{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;margin-top:18px;background:#e6c8b308;border:1px solid #5a5a5a;border-radius:18px}
+.active-session strong{display:block;font-size:20px;margin-top:4px;color:#ebebeb}
 .active-session p{color:var(--muted);font-size:13px;margin-top:5px}
 .active-session .secondary-button{white-space:nowrap}
+.continue-machine{margin-bottom:22px;border:1px solid #777777;border-radius:20px;background:#e6c8b308;overflow:hidden}
+.continue-machine>button{display:flex;align-items:center;gap:20px;width:100%;padding:20px;text-align:left}
+.continue-machine img{width:88px;height:96px;object-fit:cover;border-radius:12px;flex-shrink:0}
+.continue-machine-copy{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
+.continue-machine-copy>strong{font-size:22px;overflow-wrap:anywhere}
+.continue-machine-copy>span:not(.eyebrow){font-size:13px;color:var(--muted)}
+.continue-machine-copy .continue-machine-action{display:flex;align-items:center;gap:8px;color:var(--accent);font-weight:600}
+.continue-machine>button>svg{color:var(--accent);flex-shrink:0}
+.floating-rest{max-width:calc(100vw - 32px)}
+.floating-rest .floating-rest-copy{display:flex;flex-direction:column;gap:4px;min-width:0;text-align:left}
+.floating-rest-copy>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px}
+.floating-rest-copy>small{font-size:11px;color:var(--muted)}
+.floating-rest>strong,.floating-rest>svg{flex-shrink:0}
+.app-shell:has(.floating-rest) .page-footer{margin-bottom:90px}
+@media(max-width:600px){.continue-machine>button{gap:12px;padding:14px}.continue-machine img{width:64px;height:82px}.continue-machine-copy>strong{font-size:18px}.continue-machine-copy .eyebrow{font-size:9px}.floating-rest-copy>span{max-width:155px}.floating-rest{left:16px;width:max-content;margin-left:auto}}
 .topbar .account-link{border:1px solid var(--line);padding:0 13px;border-radius:12px}
 .topbar .header-settings{border-radius:12px}
-.search-field:focus-within{border-color:var(--amber);box-shadow:0 0 0 3px #e6b18215}
+.search-field:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px #e6c8b315}
 .machine-card{transition:transform .18s ease,border-color .18s ease;overflow:hidden}
-.machine-card:focus-within{border-color:#b68d68}
+.machine-card:focus-within{border-color:#b69f8e}
 .machine-card-main{text-align:left}
 .machine-card-copy>p{min-height:2.8em}
 .category-filters button,.favorites-filter,.favorite-button,.icon-button,.toast>button,.back-button,.quiet-button{min-height:44px}
@@ -38,7 +53,7 @@
 .auth-field input{font-size:16px}
 .account-email{overflow-wrap:anywhere}
 .landing-faq summary{min-height:56px}
-@media(hover:hover){.machine-card:hover{transform:translateY(-3px);border-color:#6d5541}.secondary-button:hover{border-color:#ad8460}.nav-item:hover svg{color:var(--amber)}}
+@media(hover:hover){.machine-card:hover{transform:translateY(-3px);border-color:#6d6d6d}.secondary-button:hover{border-color:#ad9685}.nav-item:hover svg{color:var(--accent)}}
 @media(max-width:1020px) and (min-width:601px){.sidebar .brand{margin-inline:9px}.sidebar .liftide-brand .brand-word{display:none}}
 @media(max-width:600px){
   html{scroll-padding-top:82px}

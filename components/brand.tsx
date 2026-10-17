@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export function BrandMark() {
-  return <img src="/icons/liftide-mark.webp" alt="" aria-hidden="true" className="brand-symbol" width={40} height={40}/>;
+  return <img src="/icons/liftide-logo.webp" alt="" aria-hidden="true" className="brand-symbol" width={40} height={40}/>;
 }
 
 export default function Brand({ className = '', compact = false }: { className?: string; compact?: boolean }) {

@@ -11,8 +11,8 @@ import './auth.css';
 
 type Mode = 'login' | 'signup' | 'forgot' | 'reset';
 const copy = {
-  login: { eyebrow: 'WELCOME BACK', title: 'Pick up where you left off.', text: 'Your sets, your progress, your next chapter.', action: 'Log in' },
-  signup: { eyebrow: 'YOUR NEXT CHAPTER', title: 'Make your progress yours.', text: 'Create an account to keep your training with you.', action: 'Create account' },
+  login: { eyebrow: 'WELCOME BACK', title: 'Log in', text: 'Your sets, your progress, your next chapter.', action: 'Log in' },
+  signup: { eyebrow: 'YOUR NEXT CHAPTER', title: 'Create account', text: 'Create an account to keep your training with you.', action: 'Create account' },
   forgot: { eyebrow: 'LET’S GET YOU BACK IN', title: 'Reset your password.', text: 'We’ll send a link to the email you use for Liftide.', action: 'Send reset link' },
   reset: { eyebrow: 'A FRESH START', title: 'Choose a new password.', text: 'Use at least 8 characters to keep your account secure.', action: 'Save password' },
 };
@@ -23,6 +23,15 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const [visible, setVisible] = useState(false), [busy, setBusy] = useState(false), [error, setError] = useState(''), [success, setSuccess] = useState('');
 
   const [resetToken,setResetToken] = useState(''), [currentPassword,setCurrentPassword] = useState('');
+  useEffect(() => {
+    // Neon permits localhost for local auth, but rejects the loopback IP.
+    // Navigate the browser so cookies and callback URLs use the accepted origin.
+    if (process.env.NODE_ENV === 'development' && window.location.hostname === '127.0.0.1') {
+      const url = new URL(window.location.href);
+      url.hostname = 'localhost';
+      window.location.replace(url.href);
+    }
+  }, []);
   useEffect(() => { if(mode === 'reset') setResetToken(new URLSearchParams(window.location.search).get('token') ?? ''); },[mode]);
 
   async function submit(event: FormEvent) {
@@ -59,7 +68,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     finally { setBusy(false); }
   }
 
-  return <div className="auth-page"><div className="auth-visual"><Brand className="auth-brand"/><div><span className="eyebrow">ONE SET AT A TIME</span><h2>Your pace.<br/>Your progress.</h2><p>Show up for yourself.<br/>We’ll keep the record.</p></div></div><main className="auth-main"><Link className="auth-back" href="/"><ArrowLeft size={16}/>Back to Liftide</Link><div className="auth-card"><span className="eyebrow">{content.eyebrow}</span><h1>{content.title}</h1><p className="auth-description">{content.text}</p>
+  return <div className="auth-page"><div className="auth-visual"><Brand className="auth-brand"/></div><main className="auth-main"><Link className="auth-back" href="/"><ArrowLeft size={16}/>Back to Liftide</Link><div className="auth-card"><h1>{content.title}</h1>{mode !== 'login' && <p className="auth-description">{content.text}</p>}
     {!auth.configured && <div className="auth-notice" role="status">Account sign-in is currently unavailable. You can browse exercises; saving requires an account.</div>}
     {auth.error && <p className="auth-error" role="alert">{auth.error}</p>}
     {success ? <div className="auth-success" role="status"><CheckCircle2 size={30}/><h2>{mode === 'reset' ? 'You’re all set.' : 'Check your inbox.'}</h2><p>{success}</p><Link className="primary-button" href={mode === 'reset' && auth.user ? '/train' : '/login'}>{mode === 'reset' && auth.user ? 'Back to training' : 'Back to login'}<ArrowRight size={18}/></Link></div> : auth.user && (mode === 'login' || mode === 'signup') ? <div className="auth-success"><p>You’re signed in as {auth.user.email}.</p><Link className="primary-button" href="/train">Continue training<ArrowRight size={18}/></Link><Link className="auth-inline-link" href="/account">Manage account</Link></div> : <form onSubmit={submit}>
