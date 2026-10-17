@@ -1,7 +1,7 @@
 export type Muscle = 'Upper chest' | 'Chest' | 'Shoulders' | 'Triceps' | 'Biceps' | 'Abs' | 'Quads' | 'Calves' | 'Upper back' | 'Lats' | 'Lower back' | 'Glutes' | 'Hamstrings';
 export type EquipmentType = 'Machines' | 'Free weights' | 'Bodyweight';
 export type Exercise = { id: string; name: string; machine: string; muscles: Muscle[]; secondary: Muscle[]; weight: number; reps: number; sets: number; rest: number; setup: string; kind: string; equipmentType?: EquipmentType; illustration?: string; weightHint?: string };
-export type LoggedSet = { weight: number; reps: number; done: boolean };
+export type LoggedSet = { weight: number; reps: number; done: boolean; loggedAt?: number };
 export type Session = { id: string; routine: string; started: number; finished?: number; sets: Record<string, LoggedSet[]>; demo?: boolean };
 export const exercises: Exercise[] = [
  { id:'incline', name:'Incline chest press', machine:'Technogym · Machine 04', muscles:['Upper chest'], secondary:['Shoulders','Triceps'], weight:45,reps:10,sets:3,rest:120,setup:'Seat 3 · handles at upper-chest height',kind:'press' },

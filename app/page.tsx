@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import Brand from '@/components/brand';
+import { ThemeToggle } from '@/components/theme-provider';
 import { ArrowRight, Check, Clock3, Dumbbell, ShieldCheck, TrendingUp } from 'lucide-react';
 import { exercises } from '@/lib/training';
 import './landing.css';
 
 export default function LandingPage() {
   return <div className="landing">
-    <header className="landing-nav"><Brand className="landing-brand"/><nav aria-label="Landing navigation"><a href="#how-it-works">How it works</a><a href="#equipment">The equipment</a><Link className="landing-login" href="/login">Log in</Link><Link className="landing-open" href="/signup">Create account <ArrowRight size={17}/></Link></nav></header>
+    <header className="landing-nav"><Brand className="landing-brand"/><nav aria-label="Landing navigation"><ThemeToggle/><a href="#how-it-works">How it works</a><a href="#equipment">The equipment</a><Link className="landing-login" href="/login">Log in</Link><Link className="landing-open" href="/signup">Create account <ArrowRight size={17}/></Link></nav></header>
     <main id="main" className="landing-main">
       <section className="landing-hero"><div className="landing-hero-image"/><div className="landing-hero-copy"><h1>Track your<br/><em>training.</em></h1><p>Log sets, time your rest and follow your progress.</p><div className="landing-hero-actions"><Link href="/signup" className="primary-button">Start your first set <ArrowRight size={20}/></Link><a href="#how-it-works">Take a look ↓</a></div><span className="landing-privacy"><ShieldCheck size={16}/> Browse freely. Log in to save your training.</span></div></section>
       <section id="how-it-works" className="landing-workflow"><div className="landing-section-intro"><h2>How it works</h2></div><div className="landing-steps">{[{n:'01',icon:Dumbbell,title:'Choose what’s in front of you.',text:'Find your machine, barbell or dumbbells. See the muscles it trains and keep your setup notes close.'},{n:'02',icon:Clock3,title:'Log it. Take a breath.',text:'Save your weight and reps in a few taps. Your rest timer starts automatically, with pause and skip whenever you need.'},{n:'03',icon:TrendingUp,title:'Come back a little stronger.',text:'Your last set is there when you need it. Explore weight, reps and training volume across your sessions.'}].map(({n,icon:Icon,title,text})=><article key={n}><span className="landing-step-number">{n}</span><div><Icon size={23}/><h3>{title}</h3><p>{text}</p></div></article>)}</div></section>

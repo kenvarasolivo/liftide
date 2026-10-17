@@ -27,7 +27,13 @@ export function trainingShareSummary(sessions: Session[], equipment: Exercise[],
 }
 
 export async function transparentPng(svg: SVGSVGElement): Promise<Blob> {
-  const source = new XMLSerializer().serializeToString(svg);
+  // Keep the chosen accent when the SVG is rendered outside the page's CSS.
+  const exported = svg.cloneNode(true) as SVGSVGElement;
+  const colors = getComputedStyle(svg);
+  for (const name of ['--accent', '--accent-dark', '--accent-bright']) {
+    exported.style.setProperty(name, colors.getPropertyValue(name));
+  }
+  const source = new XMLSerializer().serializeToString(exported);
   const url = URL.createObjectURL(new Blob([source], { type: 'image/svg+xml;charset=utf-8' }));
   try {
     const image = new Image();

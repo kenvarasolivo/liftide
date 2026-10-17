@@ -1,7 +1,7 @@
 'use client';
 import { useId } from 'react';
 import type { Muscle } from '@/lib/training';
-type Props={back:boolean; active:Muscle[]; worked:Muscle[]; selected?:Muscle; onSelect:(muscle:Muscle)=>void; diagnostic?:boolean; readOnly?:boolean};
+type Props={back:boolean; active:Muscle[]; worked:Muscle[]; selected?:Muscle; onSelect:(muscle:Muscle)=>void; diagnostic?:boolean; readOnly?:boolean; levels?:Partial<Record<Muscle,number>>; description?:string};
 const front:{muscle:Muscle;d:string}[]=[
  {muscle:'Shoulders',d:'M93 71 Q72 66 64 87 L59 105 Q73 109 82 96 Z M147 71 Q168 66 176 87 L181 105 Q167 109 158 96 Z'},
  {muscle:'Upper chest',d:'M95 72 L118 79 L118 95 Q97 94 84 87 Z M145 72 L122 79 L122 95 Q143 94 156 87 Z'},
@@ -22,11 +22,21 @@ const rear:{muscle:Muscle;d:string}[]=[
  {muscle:'Hamstrings',d:'M85 211 Q102 221 115 210 L108 255 L98 279 L80 273 Z M155 211 Q138 221 125 210 L132 255 L142 279 L160 273 Z'},
  {muscle:'Calves',d:'M81 290 Q97 281 106 289 L104 317 L91 349 L81 340 Z M159 290 Q143 281 134 289 L136 317 L149 349 L159 340 Z'}
 ];
-export default function BodyMap({back,active,worked,selected,onSelect,diagnostic=false,readOnly=false}:Props){const id=useId().replace(/[^a-zA-Z0-9_-]/g,'');return <svg className={`body-svg ${diagnostic?'diagnostic-body':''}`} width={readOnly?'100%':undefined} height={readOnly?'100%':undefined} viewBox="0 0 240 400" role="group" aria-label={`${back?'Back':'Front'} muscle map. ${readOnly?'Highlighted muscles trained.':diagnostic?'Purple shows muscles logged this week.':'Purple shows muscles targeted by the selected exercise.'}`}>
- <defs><linearGradient id={`${id}-bodySteel`} x1="0" y1="0" x2="1" y2="0"><stop stopColor={diagnostic?"#241e2e":"#28262a"}/><stop offset=".5" stopColor={diagnostic?"#665d75":"#55585b"}/><stop offset="1" stopColor={diagnostic?"#2b2537":"#2b292d"}/></linearGradient><linearGradient id={`${id}-muscleAmber`} x1="0" y1="0" x2="1" y2="1"><stop stopColor={"#c4b1f2"}/><stop offset="1" stopColor={"#8e75ba"}/></linearGradient><filter id={`${id}-muscleGlow`}><feGaussianBlur stdDeviation="5"/></filter></defs>
+export default function BodyMap({back,active,worked,selected,onSelect,diagnostic=false,readOnly=false,levels,description}:Props){const id=useId().replace(/[^a-zA-Z0-9_-]/g,'');return <svg className={`body-svg ${diagnostic?'diagnostic-body':''}`} width={readOnly?'100%':undefined} height={readOnly?'100%':undefined} viewBox="0 0 240 400" role="group" aria-label={`${back?'Back':'Front'} muscle map. ${description??(levels?'Brighter muscles have more recent training. Dim muscles have less recent training.':readOnly?'Highlighted muscles trained.':diagnostic?'Highlighted muscles were logged this week.':'Highlighted muscles are targeted by the selected exercise.')}`}>
+ <defs><linearGradient id={`${id}-bodySteel`} x1="0" y1="0" x2="1" y2="0"><stop stopColor={diagnostic?"#272321":"#28262a"}/><stop offset=".5" stopColor={diagnostic?"#69615c":"#55585b"}/><stop offset="1" stopColor={diagnostic?"#302925":"#2b292d"}/></linearGradient><linearGradient id={`${id}-muscleAmber`} x1="0" y1="0" x2="1" y2="1"><stop stopColor={"var(--accent, #ff853d)"}/><stop offset="1" stopColor={"var(--accent-dark, #e75b19)"}/></linearGradient><filter id={`${id}-muscleGlow`}><feGaussianBlur stdDeviation="5"/></filter></defs>
  <ellipse cx="120" cy="386" rx="57" ry="6" fill="#18171a"/>
  <path d="M105 19 Q120 7 135 19 L139 38 L131 54 L130 64 L147 69 Q173 64 181 88 L191 128 L199 157 L203 177 L208 189 L202 201 L195 195 L191 181 L184 163 L171 137 L163 117 L153 147 L149 166 L155 192 L165 227 L164 265 L161 280 L163 306 L158 352 L158 370 L169 379 L166 386 L144 384 L138 374 L139 351 L128 301 L127 282 L120 236 L113 282 L112 301 L101 351 L102 374 L96 384 L74 386 L71 379 L82 370 L82 352 L77 306 L79 280 L76 265 L75 227 L85 192 L91 166 L87 147 L77 117 L69 137 L56 163 L49 181 L45 195 L38 201 L32 189 L37 177 L41 157 L49 128 L59 88 Q67 64 93 69 L110 64 L109 54 L101 38 Z" fill={`url(#${id}-bodySteel)`} stroke="#65686a" strokeWidth=".7"/>
  <path d="M106 26 Q120 20 134 26 M110 49 L130 49 M110 64 L120 74 L130 64 M120 77 L120 185 M91 165 L103 181 M149 165 L137 181 M87 280 L104 280 M136 280 L153 280" fill="none" stroke="#797b7d" strokeOpacity=".35"/>
- {(back?rear:front).map(({muscle,d})=><g key={muscle} role={readOnly?undefined:'button'} tabIndex={readOnly?undefined:0} aria-label={muscle} onClick={readOnly?undefined:()=>onSelect(muscle)} onKeyDown={e=>{if(!readOnly&&(e.key==='Enter'||e.key===' ')){e.preventDefault();onSelect(muscle)}}} aria-pressed={selected===muscle} data-active={active.includes(muscle)} data-selected={selected===muscle} className="muscle-region"><path d={d} fill={active.includes(muscle)?`url(#${id}-muscleAmber)`:worked.includes(muscle)?(diagnostic?'#4b3b66':'#545454'):(diagnostic?'#352e41':'#36393c')} stroke={selected===muscle?('#e2d6fc'):active.includes(muscle)?('#c4b1f2'):(diagnostic?'#746a85':'#626568')} strokeWidth={selected===muscle?1.8:.65}/><title>{`${muscle}${active.includes(muscle)?(readOnly?' - trained':diagnostic?' \u2014 logged this week':' \u2014 targeted by selected exercise'):''}`}</title></g>)}
+ {(back?rear:front).map(({muscle,d})=>{
+   const level=levels?Math.max(0,Math.min(1,levels[muscle]??0)):undefined;
+   const lit=level!==undefined?level>0:active.includes(muscle);
+   const label=level!==undefined?`${muscle}: ${Math.round(level*100)}% activity glow`:muscle;
+   return <g key={muscle} role={readOnly?undefined:'button'} tabIndex={readOnly?undefined:0} aria-label={label} onClick={readOnly?undefined:()=>onSelect(muscle)} onKeyDown={e=>{if(!readOnly&&(e.key==='Enter'||e.key===' ')){e.preventDefault();onSelect(muscle)}}} aria-pressed={readOnly?undefined:selected===muscle} data-active={lit} data-selected={selected===muscle} className="muscle-region">
+     <path d={d} fill={level!==undefined?'#303137':lit?`url(#${id}-muscleAmber)`:worked.includes(muscle)?(diagnostic?'#79503a':'#545454'):(diagnostic?'#39322d':'#36393c')} stroke={selected===muscle?'var(--accent-bright, #ffb783)':lit?'var(--accent, #ff853d)':diagnostic?'#857367':'#626568'} strokeWidth={selected===muscle?1.8:.65} style={level!==undefined?{filter:'none'}:undefined}/>
+     {level!==undefined&&<path className="muscle-activity-fill" d={d} fill={`url(#${id}-muscleAmber)`} fillOpacity={level} pointerEvents="none" style={{filter:level>0?`drop-shadow(0 0 ${2+level*10}px var(--accent, #ff853d))`:'none'}}/>}
+     <title>{level!==undefined?label:`${muscle}${lit?(readOnly?' - trained':diagnostic?' - logged in selected period':' - targeted by selected exercise'):''}`}</title>
+   </g>;
+ })}
+
  <path d="M43 155 L48 161 L41 179 M197 155 L192 161 L199 179 M92 300 L91 338 M148 300 L149 338" stroke="#828487" strokeOpacity=".3" fill="none"/>
  </svg>}

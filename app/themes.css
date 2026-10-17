@@ -1,0 +1,65 @@
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 3px;
+  border-radius: 999px;
+  background: #ffffff08;
+  box-shadow: inset 0 0 0 1px #ffffff12;
+}
+.theme-toggle > button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  min-height: 38px;
+  border-radius: 50%;
+  transition: background-color 240ms ease;
+}
+.theme-toggle > button[aria-pressed=true] { background: var(--accent-selected); }
+.theme-swatch {
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  color: #1a1024;
+  transition: transform 240ms ease, box-shadow 320ms ease;
+}
+.theme-swatch-orange { background: linear-gradient(135deg, #ffad67, #ff7028); }
+.theme-swatch-purple { background: linear-gradient(135deg, #d4bcff, #a578eb); }
+.theme-toggle > button[aria-pressed=true] .theme-swatch { box-shadow: 0 0 12px var(--accent-glow); transform: scale(1.08); }
+
+/* Blend the complete accent treatment, including layered gradient glows. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(.22, 1, .36, 1);
+}
+::view-transition { pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  .theme-toggle > button, .theme-swatch { transition: none; }
+}
+.auth-topbar, .account-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.auth-topbar .auth-back { align-self: auto; }
+
+:root[data-accent='purple'] {
+  --accent: #ba90fa;
+  --accent-dark: #8e5bd1;
+  --accent-bright: #e1ccff;
+  --accent-soft: #ba90fa14;
+  --accent-selected: #ba90fa26;
+  --accent-line: #ba90fa45;
+  --accent-glow: #a776f533;
+  --accent-fill: linear-gradient(115deg, #d4bcff, #ba90fa 55%, #a578eb);
+  --accent-hover-fill: linear-gradient(115deg, #e4d3ff, #ba90fa);
+  --glow-rgb: 157 91 242;
+  --accent-rgb: 186 144 250;
+  --glow-highlight-rgb: 188 143 255;
+  --primary-text: #1a1024;
+}
+@media (max-width: 600px) {
+  .topbar > div { gap: 6px; }
+  .topbar .theme-toggle > button { width: 30px; }
+  .landing-nav nav { gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+}

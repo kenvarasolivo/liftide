@@ -49,7 +49,7 @@ export function getDraft(data: TrainingData, e: Exercise): Draft {
 function validSession(value: unknown): value is Session {
   if (!value || typeof value !== 'object') return false;
   const s = value as Session;
-  return typeof s.id === 'string' && typeof s.routine === 'string' && Number.isFinite(s.started) && record(s.sets) && Object.values(s.sets).every(sets => Array.isArray(sets) && sets.every(x => x && Number.isFinite(x.weight) && x.weight >= 0 && Number.isFinite(x.reps) && x.reps >= 0 && typeof x.done === 'boolean'));
+  return typeof s.id === 'string' && typeof s.routine === 'string' && Number.isFinite(s.started) && record(s.sets) && Object.values(s.sets).every(sets => Array.isArray(sets) && sets.every(x => x && Number.isFinite(x.weight) && x.weight >= 0 && Number.isFinite(x.reps) && x.reps >= 0 && typeof x.done === 'boolean' && (x.loggedAt === undefined || (Number.isFinite(x.loggedAt) && x.loggedAt >= 0))));
 }
 function record(value: unknown): value is Record<string, unknown> { return Boolean(value && typeof value === 'object' && !Array.isArray(value)); }
 function muscles(value: unknown): value is Muscle[] { return Array.isArray(value) && value.every(m => allMuscles.includes(m)); }

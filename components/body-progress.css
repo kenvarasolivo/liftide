@@ -1,0 +1,45 @@
+.body-progress-screen .body-screen-switch { display: inline-flex; margin: 0 0 24px; }
+.body-progress-screen .body-screen-switch button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 9px 20px; }
+.body-progress-screen .body-command-heading p { margin-top: 10px; font-size: 14px; color: var(--muted); }
+.body-period-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.body-progress-screen .body-period-card { text-align: left; padding: 22px 24px; transition: border-color .2s, background .2s; }
+.body-progress-screen .body-period-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+.body-period-card > strong { display: block; font-size: 34px; margin: 10px 0 6px; color: var(--accent-bright); line-height: 1.25; }
+.body-period-card > strong small { font-size: 15px; font-weight: 400; color: var(--text); }
+.body-period-card > span:not(.eyebrow) { font-size: 12px; color: var(--muted); }
+.body-period-line { display: block; height: 4px; margin-top: 20px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.body-period-line i { display: block; height: 100%; background: var(--accent); border-radius: inherit; }
+.body-condition-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding: 24px; margin-bottom: 24px; }
+.body-condition-intro h2 { margin-top: 10px; font-size: 25px; }
+.body-condition-intro p, .body-ranking-help { color: var(--muted); font-size: 13px; line-height: 1.7; margin-top: 12px; }
+.body-next-muscles { display: grid; gap: 5px; }
+.body-next-muscles button { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; text-align: left; border-radius: 12px; background: var(--accent-soft); }
+.body-next-muscles button:hover { background: var(--accent-selected); }
+.body-next-muscles strong { font-size: 14px; font-weight: 550; }
+.body-next-muscles small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+.body-next-muscles svg { color: var(--accent); }
+.body-progress-screen .body-glow-legend { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; margin: 0 auto 20px; max-width: 340px; font-size: 11px; color: var(--muted); }
+.body-glow-legend i { grid-column: 1 / -1; height: 5px; border-radius: 5px; background: linear-gradient(90deg, #303137, var(--accent)); }
+.body-glow-legend span:nth-child(3) { text-align: center; }
+.body-glow-legend span:last-child { text-align: right; }
+.body-progress-screen .body-last-trained { display: block; color: var(--muted); font-size: 11px; font-weight: 400; margin-top: 5px; }
+.body-progress-screen .body-model-note { color: var(--muted); font-size: 11px; line-height: 1.7; margin-top: 18px; }
+.body-ranking-help { margin: 0 0 16px; }
+.body-progress-screen .coverage-row { grid-template-columns: 110px 1fr 42px; }
+.body-progress-screen .condition-chamber .muscle-region .muscle-activity-fill { stroke: none; stroke-width: 0; transition: fill-opacity .3s, filter .3s; }
+@media (max-width: 700px) {
+  .body-condition-intro { grid-template-columns: 1fr; gap: 0; padding: 18px; }
+  .body-condition-intro .eyebrow, .body-condition-intro h2, .body-next-muscles { display: none; }
+  .body-condition-intro p { margin: 0; font-size: 12px; }
+  .body-period-cards { gap: 10px; }
+  .body-progress-screen .body-period-card { padding: 18px 14px; }
+  .body-period-card .eyebrow { font-size: 9px; letter-spacing: .7px; }
+  .body-period-card > strong { font-size: 29px; }
+  .body-period-card > strong small { display: block; font-size: 12px; margin-top: 3px; }
+  .body-period-card > span:not(.eyebrow) { font-size: 11px; }
+  .body-progress-screen .body-command-heading { align-items: flex-start; flex-wrap: nowrap; }
+  .body-progress-screen .body-command-heading h1 { font-size: 27px; }
+  .body-progress-screen .body-command-heading > .secondary-button { padding: 10px; font-size: 12px; margin-top: 8px; flex-shrink: 0; }
+  .body-progress-screen .body-command-heading p { font-size: 12px; }
+  .body-progress-screen .coverage-row { grid-template-columns: 106px 1fr 40px; }
+}

@@ -16,11 +16,11 @@
 .progress-group-filter { flex: 0 1 145px; }
 .progress-group-filter select { padding: 10px; min-height: 46px; font-size: 13px; border: 0; background: #222227; }
 .progress-history-filter { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 14px; border-radius: 14px; background: #222227; font-size: 12px; white-space: nowrap; }
-.progress-history-filter[aria-pressed=true] { background: #c4b1f226; color: var(--purple); }
+.progress-history-filter[aria-pressed=true] { background: var(--accent-selected); color: var(--purple); }
 .progress-exercise-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .progress-exercise-tile { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px; text-align: left; background: #ffffff04; border-radius: 16px; min-width: 0; }
 .progress-exercise-tile:hover { background: #ffffff0b; }
-.progress-exercise-tile[aria-pressed=true] { background: #c4b1f214; box-shadow: inset 0 0 0 1px #c4b1f245; }
+.progress-exercise-tile[aria-pressed=true] { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-line); }
 .progress-exercise-tile > img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
 .progress-exercise-tile > span { min-width: 0; flex: 1; }
 .progress-exercise-tile strong { display: block; font-size: 13px; line-height: 1.4; padding-right: 12px; }

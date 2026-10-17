@@ -4,6 +4,9 @@ import { AuthProvider } from '@/components/auth-provider';
 import './globals.css';
 import './polish.css';
 import './premium.css';
+import './themes.css';
+import { ThemeProvider } from '@/components/theme-provider';
+import { themeInitScript } from '@/lib/theme';
 export const metadata: Metadata = { title: 'Liftide — Your training, sharpened.', description: 'Train with intent. Your machine-aware workout companion, rest timer, and muscle map.' };
 export const viewport: Viewport = { themeColor: '#09090b', viewportFit: 'cover' };
 metadata.applicationName = 'Liftide';
@@ -17,4 +20,4 @@ metadata.icons = {
   shortcut: '/icons/liftide.ico',
   apple: [{ url: '/icons/liftide-apple-touch.png', sizes: '180x180', type: 'image/png' }],
 };
-export default function RootLayout({ children }: { children: React.ReactNode }) { return <html lang="en" data-scroll-behavior="smooth"><head><link rel="manifest" href="/manifest.webmanifest" crossOrigin="use-credentials"/></head><body><AuthProvider><PwaControls />{children}</AuthProvider></body></html>; }
+export default function RootLayout({ children }: { children: React.ReactNode }) { return <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: themeInitScript }}/><link rel="manifest" href="/manifest.webmanifest" crossOrigin="use-credentials"/></head><body><ThemeProvider><AuthProvider><PwaControls />{children}</AuthProvider></ThemeProvider></body></html>; }
