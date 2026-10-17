@@ -35,7 +35,8 @@ function TrainingApp({userId}:{userId:string|null}) {
   const [now,setNow] = useState(0);
   const [tab,updateTab] = useState<Tab>('Train');
   const [bodyView,updateBodyView] = useState<BodyView>('progress');
-  const [browsingMachines,setBrowsingMachines] = useState(false);
+  // A remembered exercise is a resume option, not the app's opening screen.
+  const [browsingMachines,setBrowsingMachines] = useState(true);
   const [navigationReady,setNavigationReady] = useState(false);
   useEffect(() => {
     const restore = () => {
