@@ -7,14 +7,15 @@ export interface RestNotificationTarget {
   close(): Promise<void>;
 }
 
-// Keep notification writes in order: a slow show must never overwrite a later
-// pause, cancellation, or completion. Deadlines use wall time, like the UI.
+// Only notify at completion. Replacing a browser notification every second can
+// create repeated banners even when the notification uses the same tag.
 export class RestNotifications {
   private timer: ReturnType<typeof setTimeout> | undefined;
   private rest: NotificationRest | null = null;
   private name = '';
   private completed = false;
   private queue = Promise.resolve();
+  private revision = 0;
 
   constructor(private target: RestNotificationTarget, private onError: () => void = () => {}) {}
 
@@ -25,6 +26,8 @@ export class RestNotifications {
   update(rest: NotificationRest | null, name: string) {
     const previous = this.rest;
     clearTimeout(this.timer);
+    // The UI can acknowledge expiry before the queued alert has been shown.
+    if (!(rest?.complete && this.completed && previous?.exerciseId === rest.exerciseId)) this.revision++;
     this.rest = rest;
     this.name = name;
     if (!rest || rest.complete) {
@@ -36,31 +39,33 @@ export class RestNotifications {
       return;
     }
     this.completed = false;
+    this.write(() => this.target.close());
     if (rest.endAt !== null && rest.endAt <= Date.now()) {
       this.finish();
       return;
     }
-    const body = rest.paused !== null
-      ? `${name} · ${Math.floor(rest.paused / 60)}:${String(rest.paused % 60).padStart(2, '0')} remaining. Open Liftide to resume.`
-      : `${name} · Rest ends at ${new Date(rest.endAt!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}.`;
-    this.write(() => this.target.show(rest.paused !== null ? 'Rest paused' : 'Rest timer running', {
-      body, tag: restNotificationTag, icon: '/icons/liftide-192.png',
-      silent: true, requireInteraction: true, data: { url: '/train' },
-    }));
-    if (rest.endAt !== null) this.timer = setTimeout(() => this.finish(), Math.max(0, rest.endAt - Date.now()));
+    if (rest.paused === null && rest.endAt !== null) {
+      this.timer = setTimeout(() => this.finish(), Math.max(0, rest.endAt - Date.now()));
+    }
   }
 
   private finish() {
     if (this.completed) return;
     this.completed = true;
-    this.write(() => this.target.show('Rest complete. Your next set is ready.', {
-      body: this.name, tag: restNotificationTag, icon: '/icons/liftide-192.png',
-      requireInteraction: true, renotify: true, data: { url: '/train' },
-    }));
+    const revision = ++this.revision;
+    const name = this.name;
+    this.write(async () => {
+      if (revision !== this.revision) return;
+      await this.target.show('Rest complete. Your next set is ready.', {
+        body: name, tag: restNotificationTag, icon: '/icons/liftide-192.png',
+        requireInteraction: true, renotify: true, data: { url: '/train' },
+      });
+    });
   }
 
   dispose() {
     clearTimeout(this.timer);
+    this.revision++;
     this.write(() => this.target.close());
   }
 }

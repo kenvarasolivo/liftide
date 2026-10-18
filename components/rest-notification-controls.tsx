@@ -54,5 +54,5 @@ export function useRestNotifications(rest: NotificationRest | null, name: string
   return <div className="settings-row"><div><strong>Rest timer notifications</strong><p>{permission === 'unsupported'
     ? 'Notifications are unavailable here. On iPhone or iPad, add Liftide to your Home Screen and open it there.'
     : permission === 'denied' ? 'Notifications are blocked. Allow them in your browser’s site settings.'
-    : 'Show the rest end time and an alert when it finishes, even outside Liftide. Keep this tab or app open; alerts may be delayed if your device puts it to sleep.'}</p>{error && <p role="status">{error}</p>}</div><button className="secondary-button" disabled={permission === 'unsupported' || permission === 'denied'} onClick={() => void toggle()} aria-pressed={enabled}>{enabled ? 'Turn off' : 'Enable notifications'}</button></div>;
+    : 'Get one alert when your rest finishes. Keep this tab or app open; alerts may be delayed if your device puts it to sleep.'}</p>{error && <p role="status">{error}</p>}</div><button className="secondary-button" disabled={permission === 'unsupported' || permission === 'denied'} onClick={() => void toggle()} aria-pressed={enabled}>{enabled ? 'Turn off' : 'Enable notifications'}</button></div>;
 }

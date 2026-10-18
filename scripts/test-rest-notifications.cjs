@@ -16,13 +16,30 @@ function setup() {
   return { notifications, messages };
 }
 
+test('rest stays silent until the deadline and then shows one alert', async t => {
+  t.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 1000 });
+  const { notifications, messages } = setup();
+  notifications.update(running(91000), 'Cable row');
+  for (let second = 0; second < 89; second++) {
+    t.mock.timers.tick(1000);
+    await flush();
+  }
+  assert.equal(messages.filter(message => message.title).length, 0);
+  t.mock.timers.tick(1000);
+  await flush();
+  const alerts = messages.filter(message => message.title);
+  assert.equal(alerts.length, 1);
+  assert.match(alerts[0].title, /Rest complete/);
+  assert.notEqual(alerts[0].options.silent, true);
+  notifications.dispose();
+});
+
 test('deadline alert is delivered once even when the UI also completes the rest', async t => {
   t.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 1000 });
   const { notifications, messages } = setup();
   notifications.update(running(3000), 'Cable row');
   await flush();
-  assert.equal(messages[0].title, 'Rest timer running');
-  assert.equal(messages[0].options.silent, true);
+  assert.equal(messages.filter(message => message.title).length, 0);
   t.mock.timers.tick(2000);
   notifications.update({ ...running(null), complete: true }, 'Cable row');
   await flush();
@@ -37,11 +54,12 @@ test('pause cancels the old deadline and resume uses the new deadline', async t 
   t.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 1000 });
   const { notifications, messages } = setup();
   notifications.update(running(3000), 'Cable row');
+  await flush();
   notifications.update({ ...running(null), paused: 2 }, 'Cable row');
   t.mock.timers.tick(5000);
   await flush();
   assert.equal(messages.length, 2);
-  assert.equal(messages[1].title, 'Rest paused');
+  assert.equal(messages.filter(message => message.title).length, 0);
   notifications.update(running(8000), 'Cable row');
   t.mock.timers.tick(2000);
   await flush();
@@ -56,12 +74,12 @@ test('adjustment and skipping cancel stale alerts', async t => {
   notifications.update(running(5000), 'Cable row');
   t.mock.timers.tick(2000);
   await flush();
-  assert.equal(messages.length, 2);
+  assert.equal(messages.filter(message => message.title).length, 0);
   notifications.update({ ...running(null), complete: true }, 'Cable row');
   t.mock.timers.tick(5000);
   await flush();
   assert.deepEqual(messages.at(-1), { close: true });
-  assert.equal(messages.some(message => message.title?.startsWith('Rest complete')), false);
+  assert.equal(messages.some(message => message.title?.includes('Rest complete')), false);
   notifications.dispose();
 });
 
@@ -70,7 +88,7 @@ test('a delayed UI tick still delivers completion; removing rest clears it', asy
   const { notifications, messages } = setup();
   notifications.update(running(500), 'Cable row');
   await flush();
-  assert.match(messages[0].title, /Rest complete/);
+  assert.match(messages.find(message => message.title).title, /Rest complete/);
   notifications.update(null, '');
   await flush();
   assert.deepEqual(messages.at(-1), { close: true });
@@ -84,10 +102,10 @@ test('queued cancellation runs after an in-flight notification finishes', async 
     show: () => new Promise(resolve => { release = () => { messages.push('shown'); resolve(); }; }),
     async close() { messages.push('closed'); },
   });
-  notifications.update(running(Date.now() + 60000), 'Cable row');
+  notifications.update(running(Date.now() - 1), 'Cable row');
   await flush();
   notifications.dispose();
   release();
   await flush();
-  assert.deepEqual(messages, ['shown', 'closed']);
+  assert.deepEqual(messages, ['closed', 'shown', 'closed']);
 });
