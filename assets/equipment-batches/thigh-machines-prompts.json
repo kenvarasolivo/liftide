@@ -1,0 +1,15 @@
+{
+  "generator": "Built-in image_gen",
+  "images": [
+    {
+      "id": "hip-adduction",
+      "path": "public/equipment/catalog/hip-adduction.webp",
+      "prompt": "Use case: product-mockup. Asset: square gym exercise catalog photograph. Create a photorealistic seated INNER THIGH hip ADDUCTION weight-stack machine, empty with no person. Black steel frame, black leather upright backrest and seat, two articulated thigh levers in a wide open starting position. Padded contact surfaces face OUTWARD against the inner thighs; users squeeze legs together. Clearly visible foot supports, mechanically plausible linkage and a single enclosed weight stack beside the seat. Full machine centered in three-quarter front view, entire base in frame with margin. Premium dim gym, softly blurred racks behind, warm amber horizontal lighting, charcoal and warm brown palette, polished concrete floor. Match professional equipment catalog photography. No text, brands, logos, watermarks, arrows, people or collage."
+    },
+    {
+      "id": "hip-abduction",
+      "path": "public/equipment/catalog/hip-abduction.webp",
+      "prompt": "Use case: product-mockup. Asset: square gym exercise catalog photograph. Create a photorealistic seated OUTER THIGH hip ABDUCTION weight-stack machine, empty with no person. Black steel frame, black leather upright backrest and seat, two articulated thigh levers in a near together starting position. Padded contact surfaces face INWARD against the outer thighs; users push legs apart. Clearly visible foot supports, mechanically plausible linkage and a single enclosed weight stack beside the seat. Full machine centered in three-quarter front view, entire base in frame with margin. Premium dim gym, softly blurred racks behind, warm amber horizontal lighting, charcoal and warm brown palette, polished concrete floor. Match professional equipment catalog photography. No text, brands, logos, watermarks, arrows, people or collage."
+    }
+  ]
+}

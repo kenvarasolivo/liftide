@@ -1,4 +1,4 @@
-// Individual photographs cropped from the sheets in assets/equipment-batches.
+// Catalog photographs from generated sheets and individual imagegen assets.
 export const equipmentPhotos: Record<string, string> = {
   'chest-press': '/equipment/catalog/chest-press.webp',
   'smith-press': '/equipment/catalog/smith-press.webp',
@@ -22,6 +22,8 @@ export const equipmentPhotos: Record<string, string> = {
   'triceps-extension': '/equipment/catalog/triceps-extension.webp',
   'assisted-dip': '/equipment/catalog/assisted-dip.webp',
   'leg-extension': '/equipment/catalog/leg-extension.webp',
+  'hip-adduction': '/equipment/catalog/hip-adduction.webp',
+  'hip-abduction': '/equipment/catalog/hip-abduction.webp',
   'lying-leg-curl': '/equipment/catalog/lying-leg-curl.webp',
   'hack-squat': '/equipment/catalog/hack-squat.webp',
   'smith-squat': '/equipment/catalog/smith-squat.webp',

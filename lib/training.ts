@@ -1,4 +1,4 @@
-export type Muscle = 'Upper chest' | 'Chest' | 'Shoulders' | 'Triceps' | 'Biceps' | 'Abs' | 'Quads' | 'Calves' | 'Upper back' | 'Lats' | 'Lower back' | 'Glutes' | 'Hamstrings';
+export type Muscle = 'Upper chest' | 'Chest' | 'Shoulders' | 'Triceps' | 'Biceps' | 'Abs' | 'Quads' | 'Calves' | 'Upper back' | 'Lats' | 'Lower back' | 'Glutes' | 'Hamstrings' | 'Inner thighs';
 export type EquipmentType = 'Machines' | 'Free weights' | 'Bodyweight';
 export type Exercise = { id: string; name: string; machine: string; muscles: Muscle[]; secondary: Muscle[]; weight: number; reps: number; sets: number; rest: number; setup: string; kind: string; equipmentType?: EquipmentType; illustration?: string; weightHint?: string };
 export type LoggedSet = { weight: number; reps: number; done: boolean; loggedAt?: number };
@@ -40,6 +40,8 @@ const additions: Array<[string, string, Muscle[], Muscle[], EquipmentType, strin
  ['triceps-extension','Overhead cable triceps extension',['Triceps'],[],'Machines','cable',90,'Use a rope attachment and adjust the pulley for your stance.','Log the weight shown on the stack.'],
  ['assisted-dip','Assisted dip',['Triceps'],['Chest','Shoulders'],'Machines','pullup',120,'Adjust the assistance and use a comfortable range.','Log assistance in kg. Less assistance means a harder set; volume reflects assistance, not work lifted.'],
  ['leg-extension','Leg extension',['Quads'],[],'Machines','extension',90,'Align your knees with the pivot and pad above your ankles.','Log the weight shown on the stack.'],
+ ['hip-adduction','Inner thigh machine (hip adduction)',['Inner thighs'],[],'Machines','hip-adduction',90,'Sit with your back supported and pads against your inner thighs. Bring your legs together through a comfortable range.','Log the weight shown on the stack.'],
+ ['hip-abduction','Outer thigh machine (hip abduction)',['Glutes'],[],'Machines','hip-abduction',90,'Sit with your back supported and pads against your outer thighs. Push your legs apart through a comfortable range.','Log the weight shown on the stack.'],
  ['lying-leg-curl','Lying leg curl',['Hamstrings'],[],'Machines','extension',90,'Align knees with the pivot and place the pad above your heels.','Log the weight shown on the stack.'],
  ['hack-squat','Hack squat',['Quads'],['Glutes','Hamstrings'],'Machines','rack',150,'Set the shoulder pads and safety stops before loading.','Log total added plates; use the same convention every session.'],
  ['smith-squat','Smith machine squat',['Quads'],['Glutes'],'Machines','rack',150,'Set the bar and safety stops for your range of motion.','Include effective bar weight and all added plates.'],
@@ -56,7 +58,7 @@ const additions: Array<[string, string, Muscle[], Muscle[], EquipmentType, strin
 ];
 exercises.push(...additions.map(([id,name,muscles,secondary,equipmentType,illustration,rest,setup,weightHint]):Exercise => ({id,name,muscles,secondary,equipmentType,illustration,rest,setup,weightHint,machine:equipmentType,kind:illustration,weight:0,reps:10,sets:3})));
 export const routines = [ {name:'Push day',tag:'CHEST · SHOULDERS · TRICEPS',ids:['incline','shoulder','fly','triceps'],duration:45}, {name:'Pull day',tag:'BACK · BICEPS',ids:['lat','row','curl'],duration:40}, {name:'Leg day',tag:'LEGS · CORE',ids:['leg','ham','calf','abs'],duration:50} ];
-export const allMuscles: Muscle[] = ['Upper chest','Chest','Shoulders','Triceps','Biceps','Abs','Quads','Calves','Upper back','Lats','Lower back','Glutes','Hamstrings'];
+export const allMuscles: Muscle[] = ['Upper chest','Chest','Shoulders','Triceps','Biceps','Abs','Quads','Calves','Upper back','Lats','Lower back','Glutes','Hamstrings','Inner thighs'];
 export function createSession(name: string, history: Session[] = []): Session {
  const routine=routines.find(r=>r.name===name)!;
  const sets: Session['sets']={};

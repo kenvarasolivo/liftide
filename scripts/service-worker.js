@@ -23,6 +23,16 @@ self.addEventListener('activate',event => {
   })());
 });
 self.addEventListener('message',event => { if(event.data?.type === 'SKIP_WAITING') self.skipWaiting(); });
+self.addEventListener('notificationclick',event => {
+  if(event.notification.tag !== 'liftide-rest') return;
+  event.notification.close();
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    const existing = windows.find(client => new URL(client.url).pathname === '/train');
+    if(existing) await existing.focus();
+    else await self.clients.openWindow('/train');
+  })());
+});
 self.addEventListener('fetch',event => {
   const request = event.request, url = new URL(request.url);
   if(request.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/api/') || url.pathname === '/auth/callback') return;

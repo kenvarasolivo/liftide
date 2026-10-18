@@ -1,0 +1,21 @@
+.app-settings > .dialog-description { margin-bottom: 26px; }
+.app-settings-section { margin-top: 24px; }
+.app-settings-section > h3 { color: var(--accent); font-size: 10px; font-weight: 650; text-transform: uppercase; letter-spacing: 1.7px; margin-bottom: 8px; }
+.app-settings .settings-row { gap: 18px; padding: 20px 0; border-color: var(--line); }
+.app-settings .settings-row > div { flex: 1; min-width: 0; }
+.app-settings .settings-row > .theme-toggle { flex: 0 0 auto; }
+.app-settings .settings-row strong { font-size: 14px; }
+.app-settings .settings-row p { font-size: 12px; line-height: 1.75; }
+.app-settings .secondary-button { flex-shrink: 0; gap: 7px; }
+.app-settings-note { color: var(--muted); font-size: 11px; line-height: 1.8; margin-bottom: 16px; }
+.app-settings-links { display: grid; border: 1px solid var(--line); border-radius: 16px; margin-top: 24px; overflow: hidden; }
+.app-settings-links > a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 17px; }
+.app-settings-links > a + a { border-top: 1px solid var(--line); }
+.app-settings-links > a:hover { background: var(--accent-soft); }
+.app-settings-links strong { display: block; font-size: 13px; font-weight: 550; }
+.app-settings-links span { display: block; font-size: 11px; color: var(--muted); margin-top: 4px; }
+.app-settings-links svg { color: var(--muted); }
+@media (max-width: 480px) {
+  .app-settings .settings-row { flex-wrap: wrap; }
+  .app-settings .settings-row > div:first-child { flex-basis: 170px; }
+}

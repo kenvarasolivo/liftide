@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import Brand from '@/components/brand';
-import { ThemeToggle } from '@/components/theme-provider';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
@@ -44,7 +43,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     setBusy(true);
     try {
       if (mode === 'login') {
-        const { error } = await client.signIn.email({ email: email.trim(), password });
+        const { error } = await client.signIn.email({ email: email.trim(), password, rememberMe: true });
         if (error) throw new Error(error.message);
         await auth.refresh();
         router.replace('/train');
@@ -69,7 +68,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     finally { setBusy(false); }
   }
 
-  return <div className="auth-page"><div className="auth-visual"><Brand className="auth-brand"/></div><main className="auth-main"><div className="auth-topbar"><Link className="auth-back" href="/"><ArrowLeft size={16}/>Back to Liftide</Link><ThemeToggle/></div><div className="auth-card"><h1>{content.title}</h1>{mode !== 'login' && <p className="auth-description">{content.text}</p>}
+  return <div className="auth-page"><div className="auth-visual"><Brand className="auth-brand"/></div><main className="auth-main"><div className="auth-topbar"><Link className="auth-back" href="/"><ArrowLeft size={16}/>Back to Liftide</Link></div><div className="auth-card"><h1>{content.title}</h1>{mode !== 'login' && <p className="auth-description">{content.text}</p>}
     {!auth.configured && <div className="auth-notice" role="status">Account sign-in is currently unavailable. You can browse exercises; saving requires an account.</div>}
     {auth.error && <p className="auth-error" role="alert">{auth.error}</p>}
     {success ? <div className="auth-success" role="status"><CheckCircle2 size={30}/><h2>{mode === 'reset' ? 'You’re all set.' : 'Check your inbox.'}</h2><p>{success}</p><Link className="primary-button" href={mode === 'reset' && auth.user ? '/train' : '/login'}>{mode === 'reset' && auth.user ? 'Back to training' : 'Back to login'}<ArrowRight size={18}/></Link></div> : auth.user && (mode === 'login' || mode === 'signup') ? <div className="auth-success"><p>You’re signed in as {auth.user.email}.</p><Link className="primary-button" href="/train">Continue training<ArrowRight size={18}/></Link><Link className="auth-inline-link" href="/account">Manage account</Link></div> : <form onSubmit={submit}>

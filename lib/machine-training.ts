@@ -31,7 +31,7 @@ export function category(e: Exercise): Category {
   if (['Upper chest', 'Chest'].includes(first)) return 'Chest';
   if (['Lats', 'Upper back', 'Lower back'].includes(first)) return 'Back';
   if (['Biceps', 'Triceps'].includes(first)) return 'Arms';
-  if (['Quads', 'Glutes', 'Hamstrings', 'Calves'].includes(first)) return 'Legs';
+  if (['Quads', 'Glutes', 'Hamstrings', 'Calves', 'Inner thighs'].includes(first)) return 'Legs';
   return first === 'Abs' ? 'Core' : 'Shoulders';
 }
 export function defaultPhoto(e: Exercise): string {

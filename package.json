@@ -7,7 +7,7 @@
     "build": "next build && node scripts/build-pwa.mjs",
     "start": "next start",
     "check": "tsc --noEmit",
-    "test": "node --test scripts/test-training-sync.cjs scripts/test-neon-api.cjs scripts/test-training-share.cjs scripts/test-body-progress.cjs scripts/test-pwa-updates.cjs"
+    "test": "node --test scripts/test-training-sync.cjs scripts/test-neon-api.cjs scripts/test-training-share.cjs scripts/test-body-progress.cjs scripts/test-pwa-updates.cjs scripts/test-rest-notifications.cjs scripts/test-account-session.cjs"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",

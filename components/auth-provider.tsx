@@ -2,7 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { authClient } from '@/lib/auth-client';
 
-type User = { id: string; email: string; name?: string };
+type User = { id: string; email: string; name?: string; image?: string | null };
 type Auth = { user: User | null; loading: boolean; configured: boolean; error: string; refresh: () => Promise<void> };
 const AuthContext = createContext<Auth>({ user: null, loading: true, configured: false, error: '', refresh: async () => {} });
 const USER_CACHE = 'liftide:neon-user';
@@ -28,10 +28,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!configured) { setState({ user: null, loading: false, configured: false, error: '' }); return; }
       const { data, error } = await authClient.getSession();
       if (error) throw new Error(error.message);
-      const user = data?.user ? { id: data.user.id, email: data.user.email, name: data.user.name } : null;
+      const user = data?.user ? { id: data.user.id, email: data.user.email, name: data.user.name, image: data.user.image } : null;
       try { if (user) localStorage.setItem(USER_CACHE, JSON.stringify(user)); else localStorage.removeItem(USER_CACHE); } catch {}
       setState({ user, loading: false, configured: true, error: '' });
-    } catch { setState(s => ({ ...s, loading: false, error: 'Your session could not be restored. Please try signing in again.' })); }
+    } catch {
+      // A temporary network failure must not turn a remembered account into
+      // guest mode. Cached identity never authorizes an API request.
+      const cached = offlineUser();
+      setState(s => ({ ...s, user: s.user ?? cached, configured: s.configured || Boolean(cached), loading: false, error: 'Account connection unavailable. We’ll reconnect when you’re back online.' }));
+    }
   }, []);
   useEffect(() => {
     void refresh();
