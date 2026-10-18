@@ -507,7 +507,7 @@ input::placeholder, textarea::placeholder { color: #909090; }
   .app-shell .set-field { padding: 12px 10px; }
   .app-shell .set-field input { font-size: 40px; }
   .app-shell .set-field label { font-size: 13px; }
-  .app-shell .logging-action { position: sticky; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); z-index: 5; padding: 12px 0 4px; }
+  .app-shell .logging-action { position: static; padding: 12px 0 4px; }
   .app-shell .logger-main { min-width: 0; }
   .app-shell .sync-notice { padding: 16px; }
   .app-shell .progress-summary { grid-template-columns: 1fr; gap: 0; }

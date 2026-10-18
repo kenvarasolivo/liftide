@@ -4,6 +4,7 @@
 .landing-brand{font-size:32px;font-weight:700;letter-spacing:-1.8px}
 .landing-nav nav{display:flex;align-items:center;gap:26px;font-size:13px;color:#b8b8bd}
 .landing-nav nav>a:hover{color:var(--text)}
+.landing-nav .landing-login{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 8px;white-space:nowrap;flex-shrink:0}
 .landing-open{display:flex;align-items:center;gap:18px;color:var(--text);border:1px solid #ffffff30;border-radius:12px;padding:12px 18px}
 .landing-kicker{display:block;font-size:10px;font-weight:650;letter-spacing:1.7px;color:var(--accent);line-height:1.7}
 .landing-live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:8px;box-shadow:0 0 13px var(--accent)}
@@ -239,7 +240,7 @@
 
 @media(max-width:540px){.landing-nav{padding:17px 6%;gap:15px}
 .landing-nav .landing-brand{font-size:28px}
-.landing-nav nav{gap:11px}
+.landing-nav nav{gap:8px;flex-wrap:nowrap}
 .landing-nav .theme-toggle{display:none}
 .landing-open{font-size:11px;padding:10px 12px;gap:7px}
 .landing-login{font-size:11px}

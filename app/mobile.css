@@ -1,7 +1,8 @@
-/* Preserve browser zoom and touch scrolling. */
-html {
-  touch-action: auto;
+/* Installed apps scroll normally without pinch or double-tap page zoom. */
+@media (display-mode: standalone) {
+  html { touch-action: pan-x pan-y; }
 }
+html[data-standalone] { touch-action: pan-x pan-y; }
 
 @media (max-width: 768px), (any-pointer: coarse), (display-mode: standalone) {
   /* iOS zooms focused form fields when their text is smaller than 16px. */
