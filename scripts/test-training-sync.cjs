@@ -8,6 +8,66 @@ const { emptyData, parseTraining } = require('../lib/machine-training.ts');
 const { exercises } = require('../lib/training.ts');
 const { category } = require('../lib/machine-training.ts');
 const fresh = () => structuredClone(emptyData);
+
+test('set corrections preserve timestamps and session status, and reject stale or invalid edits', () => {
+  const { correctTrainingSet } = require('../lib/training-sessions.ts');
+  const original = [{ weight: 20, reps: 10, done: false }, { weight: 40, reps: 8, done: true, loggedAt: 125 }];
+  const session = { id: 'finished', routine: 'Push', started: 100, finished: 200, sets: { incline: original } };
+  const data = { ...fresh(), history: [session] };
+  const edited = correctTrainingSet(data, session.id, 'incline', 1, original, { weight: 35.5, reps: 10 });
+  assert.deepEqual(edited.history[0].sets.incline[1], { weight: 35.5, reps: 10, done: true, loggedAt: 125 });
+  assert.equal(edited.history[0].finished, 200);
+  assert.equal(data.history[0].sets.incline[1].weight, 40);
+  assert.equal(correctTrainingSet(edited, session.id, 'incline', 1, original, null), edited);
+  assert.equal(correctTrainingSet(data, session.id, 'incline', 1, original, { weight: -5, reps: 10 }), data);
+  assert.equal(correctTrainingSet(data, session.id, 'incline', 1, original, { weight: 5, reps: 1.5 }), data);
+  const deleted = correctTrainingSet(data, session.id, 'incline', 1, original, null);
+  assert.deepEqual(deleted.history[0].sets.incline, [original[0]]);
+  assert.equal(correctTrainingSet(deleted, session.id, 'incline', 1, original, null), deleted);
+});
+
+test('deleting a session clears its active rest and preserves unrelated workouts', () => {
+  const { deleteTrainingSession, correctTrainingSet } = require('../lib/training-sessions.ts');
+  const original = [{ weight: 40, reps: 8, done: true, loggedAt: 125 }];
+  const current = { id: 'active', routine: 'Push', started: 100, sets: { incline: original } };
+  const other = { ...current, id: 'other', finished: 200 };
+  const rest = { exerciseId: 'incline', endAt: 500, paused: null, duration: 120, complete: false };
+  const data = { ...fresh(), current, rest, history: [other] };
+  const removedSet = correctTrainingSet(data, current.id, 'incline', 0, original, null);
+  assert.equal(removedSet.rest, null);
+  assert.deepEqual(removedSet.current.sets.incline, []);
+  const removedHistory = deleteTrainingSession(data, other.id);
+  assert.deepEqual(removedHistory.history, []);
+  assert.equal(removedHistory.current, current);
+  assert.equal(removedHistory.rest, rest);
+  const removedActive = deleteTrainingSession(data, current.id);
+  assert.equal(removedActive.current, null);
+  assert.equal(removedActive.rest, null);
+  assert.deepEqual(removedActive.history, [other]);
+});
+
+test('corrections survive database reload and concurrent deletion cannot shift the edit target', async () => {
+  const { correctTrainingSet, deleteTrainingSession } = require('../lib/training-sessions.ts');
+  const original = [{ weight: 40, reps: 8, done: true, loggedAt: 125 }, { weight: 50, reps: 6, done: true, loggedAt: 130 }];
+  let row = { data: { ...fresh(), history: [{ id: 'saved', routine: 'Push', started: 100, finished: 200, sets: { incline: original } }] }, revision: 1 };
+  let conflict = false;
+  const remote = { load: async () => structuredClone(row), save: async (data, revision) => {
+    if(conflict) { conflict = false; row.data.history[0].sets.incline.shift(); row.revision++; return 0; }
+    assert.equal(revision, row.revision); row = { data: structuredClone(data), revision: revision + 1 }; return row.revision;
+  } };
+  const sync = store(memory(), remote); await sync.start();
+  await sync.update(data => correctTrainingSet(data, 'saved', 'incline', 1, original, { weight: 45, reps: 7 }));
+  const edited = structuredClone(row.data.history[0].sets.incline);
+  conflict = true;
+  await sync.update(data => correctTrainingSet(data, 'saved', 'incline', 1, edited, { weight: 60, reps: 5 }));
+  assert.deepEqual(row.data.history[0].sets.incline, [edited[1]]);
+  sync.dispose();
+  const reopened = store(memory(), remote); await reopened.start();
+  assert.deepEqual(reopened.snapshot.data.history[0].sets.incline, [edited[1]]);
+  await reopened.update(data => deleteTrainingSession(data, 'saved'));
+  await reopened.sync();
+  assert.deepEqual(row.data.history, []); reopened.dispose();
+});
 function memory() { const values = new Map(); return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), values }; }
 function store(storage, remote, key = 'account') { return new TrainingSync(remote, () => {}); }
 

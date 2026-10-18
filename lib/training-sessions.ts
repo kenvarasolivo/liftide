@@ -36,6 +36,24 @@ export function updateTrainingSession(data: TrainingData, id: string, update: (s
     history: data.history.map(session => session.id === id ? update(session) : session) };
 }
 
+export function deleteTrainingSession(data: TrainingData, id: string): TrainingData {
+  return { ...data, history: data.history.filter(session => session.id !== id),
+    current: data.current?.id === id ? null : data.current,
+    rest: data.current?.id === id ? null : data.rest };
+}
+
+// Compare the original exercise log when rebasing so a concurrent correction or
+// deletion cannot make an array index point at somebody else's set.
+export function correctTrainingSet(data: TrainingData, sessionId: string, exerciseId: string, index: number, original: LoggedSet[], replacement: Pick<LoggedSet, 'weight' | 'reps'> | null): TrainingData {
+  const session = trainingSessions(data).find(item => item.id === sessionId);
+  const sets = session?.sets[exerciseId];
+  if (!sets || !sets[index]?.done || JSON.stringify(sets) !== JSON.stringify(original)) return data;
+  if (replacement && (!Number.isFinite(replacement.weight) || replacement.weight < 0 || replacement.weight > 1500 || !Number.isInteger(replacement.reps) || replacement.reps < 1 || replacement.reps > 500)) return data;
+  const corrected = replacement ? sets.map((set, i) => i === index ? { ...set, ...replacement } : set) : sets.filter((_, i) => i !== index);
+  const updated = updateTrainingSession(data, sessionId, item => ({ ...item, sets: { ...item.sets, [exerciseId]: corrected } }));
+  return { ...updated, rest: !replacement && data.current?.id === sessionId && data.rest?.exerciseId === exerciseId && index === sets.findLastIndex(set => set.done) ? null : data.rest };
+}
+
 // One-time recovery of old account-scoped offline workouts. Database settings and
 // finished status win. Merge sets as a multiset so repeated equal sets survive.
 export function recoverLegacySessions(data: TrainingData, legacy: TrainingData, recoveryId: string): TrainingData {

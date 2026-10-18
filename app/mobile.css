@@ -11,3 +11,15 @@ html {
     font-size: 16px !important;
   }
 }
+.history-set-list{display:grid;gap:8px;margin:12px 0 20px}
+.history-set-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line)}
+.history-set-row>span{color:var(--muted);font-size:13px}
+.history-set-row>strong{font-size:14px}
+.history-set-row .set-edit-button{margin-left:auto}
+.set-edit-button{min-height:44px;flex-shrink:0}
+.logged-set{flex-wrap:wrap}
+.history-detail .history-delete-button{display:flex;margin:16px 0}
+.history-delete-button{color:var(--muted)}
+.set-correction-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.set-correction-fields input{width:100%;min-width:0}
+.correction-error{color:#f28d8d;font-size:14px;line-height:1.6;margin:12px 0}
