@@ -7,6 +7,8 @@ export type Draft = { weight: string; reps: string };
 export type MuscleTargets = { muscles: Muscle[]; secondary: Muscle[] };
 export type TrainingData = {
   version: 2;
+  appliedChanges?: string[];
+  legacyImports?: string[];
   history: Session[];
   current: Session | null;
   selectedId: string | null;
@@ -58,6 +60,8 @@ export function parseTraining(value: unknown): TrainingData {
   const invalid = () => { throw new Error('Invalid workout data'); };
   if (!record(saved) || saved.version !== 2 || !Array.isArray(saved.history) || !saved.history.every(validSession) || (saved.current && !validSession(saved.current))) invalid();
   for (const key of ['drafts','setups','labels','restPreferences','muscleTargets'] as const) if(saved[key] !== undefined && !record(saved[key])) invalid();
+  if (saved.legacyImports !== undefined && (!Array.isArray(saved.legacyImports) || !saved.legacyImports.every(id => typeof id === 'string' && id.length <= 100))) invalid();
+  if (saved.appliedChanges !== undefined && (!Array.isArray(saved.appliedChanges) || saved.appliedChanges.length > 256 || !saved.appliedChanges.every(id => typeof id === 'string' && id.length <= 100))) invalid();
   if (saved.name !== undefined && typeof saved.name !== 'string') invalid();
   if (saved.selectedId !== undefined && saved.selectedId !== null && typeof saved.selectedId !== 'string') invalid();
   if (saved.favorites !== undefined && (!Array.isArray(saved.favorites) || !saved.favorites.every(id => typeof id === 'string'))) invalid();

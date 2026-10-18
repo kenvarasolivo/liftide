@@ -20,11 +20,21 @@ The worker caches public page shells and equipment, never auth or training APIs.
 
 Use the browser's Install option, the in-app Install button when available, or
 Share → Add to Home Screen on iOS. The installed app opens directly to `/train`.
-After the first successful online load and service-worker installation, both
-pages and equipment work offline. Previously signed-in users can also log
-workouts, use timers and view history offline. Guests can browse but cannot save.
-Signed-in workouts keep a local cache; account photos use scoped IndexedDB storage.
-Clearing browser site data removes the offline cache and local training data.
+After the first successful online load and service-worker installation, public
+page shells and equipment are available offline. Training records are loaded
+from the account database and require a connection. Logging a set writes it
+immediately; the UI says saved only after the database acknowledges it. No new
+workout records are persisted to localStorage or IndexedDB. Uploaded equipment
+photos remain device-only and account-scoped; theme and authentication storage
+are separate from workout persistence.
+
+Open sessions appear in History from the first logged set. Finishing gives the
+session a name and completion timestamp; it is not required to preserve sets.
+Network failures leave changes pending in memory, show an unsaved warning, and
+retry on reconnect or every 15 seconds while visible. Keep the page open until
+saving succeeds. Refreshing or closing while writes are pending triggers the
+browser's unsaved-changes warning. Other devices' changes are refreshed and
+revision conflicts retry against the latest database record automatically.
 
 New builds download in the background. An Update app banner lets you choose when
 to reload; updates also activate once all existing app tabs have closed. A failed
@@ -43,9 +53,7 @@ Copy `.env.example` to `.env.local` or `.env` when your project is ready. Set
 `DATABASE_URL`, `NEON_AUTH_BASE_URL` and `NEON_AUTH_COOKIE_SECRET`, then run the
 Neon SQL migration. See [neon/README.md](neon/README.md) for complete setup.
 Without credentials, the app remains in preview mode; saving requires login. All credentials are
-server-only. Signed-in training has private per-user records and separate offline
-caches. Photos stay device-only. Guests cannot save training or photos. Legacy device-only records are preserved;
-a signed-in user can copy them into an empty account from the Account page.
+server-only. Signed-in training uses private per-user database records. Photos stay device-only. Guests cannot save training or photos. Old account-scoped unsynced sessions are recovered into the matching account automatically, with a database receipt preventing repeat imports. Old device records remain untouched; guest-era workouts can be copied into an empty account from the Account page.
 
 ## Included
 
@@ -61,9 +69,9 @@ a signed-in user can copy them into an empty account from the Account page.
 - Weight-entry guidance for the added exercises, including per-dumbbell, total-barbell, bodyweight and assistance conventions. Assisted-exercise charts show lowest assistance rather than highest weight.
 - A responsive landing page at `/`, with the workout app at `/train`.
 - Responsive desktop and mobile layouts, accessible dialogs and keyboard-selectable muscles.
-- Login-required persistence and JSON export, with private account sync and offline caches. Guests have transient exercise previews only. Legacy local records remain untouched and can be recovered after login.
+- Login-required persistence and JSON export, with immediate database writes and automatic revision retries. Guests have transient exercise previews only. Legacy local records remain untouched and can be recovered after login.
 
-Saving requires login. Training syncs to the account with a browser-local cache; photos remain in account-scoped IndexedDB on the current device. JSON export includes training, custom machines and setup notes; photo files remain on the device. The body map shows exercise targets and logged coverage, not recovery or a prescription. Machine setups and starting weights are examples to customize.
+Saving requires login. Training saves directly to the account database; photos remain in account-scoped IndexedDB on the current device. JSON export includes training, custom machines and setup notes; photo files remain on the device. The body map shows exercise targets and logged coverage, not recovery or a prescription. Machine setups and starting weights are examples to customize.
 
 ## Structure
 

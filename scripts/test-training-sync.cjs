@@ -9,7 +9,7 @@ const { exercises } = require('../lib/training.ts');
 const { category } = require('../lib/machine-training.ts');
 const fresh = () => structuredClone(emptyData);
 function memory() { const values = new Map(); return { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), values }; }
-function store(storage, remote, key = 'account') { return new TrainingSync(key, storage, remote, () => {}); }
+function store(storage, remote, key = 'account') { return new TrainingSync(remote, () => {}); }
 
 test('guests cannot save training, favorites or equipment edits', async () => {
   const storage = memory(), sync = store(storage, null, trainingKey(null));
@@ -70,44 +70,164 @@ test('account starts with its cloud data instead of guest data', async () => {
   const sync = store(memory(), remote); await sync.start();
   assert.equal(sync.snapshot.data.name, 'Cloud'); assert.equal(sync.snapshot.status, 'synced'); sync.dispose();
 });
-test('offline edits survive reload and upload when connection returns', async () => {
-  const storage = memory(); let online = false, saves = 0;
-  const remote = { load: async () => { if (!online) throw new Error('Offline'); return null; }, save: async (data, revision) => { saves++; assert.equal(data.name, 'Offline work'); assert.equal(revision, 0); return 1; } };
-  const first = store(storage, remote); await first.start(); first.update(d => ({ ...d, name: 'Offline work' })); first.dispose();
-  assert.equal(JSON.parse(storage.getItem('account')).dirty, true);
-  online = true; const resumed = store(storage, remote); await resumed.start();
-  assert.equal(saves, 1); assert.equal(JSON.parse(storage.getItem('account')).dirty, false); resumed.dispose();
+test('offline startup blocks training writes and never creates a device record', async () => {
+  const storage = memory();
+  const sync = store(storage, { load: async () => { throw new Error('Offline'); }, save: async () => { throw new Error('Unexpected write'); } });
+  await sync.start();
+  assert.equal(sync.snapshot.canSave, false);
+  assert.equal(await sync.update(d => ({ ...d, name: 'Not accepted' })), false);
+  assert.equal(sync.snapshot.data.name, '');
+  assert.equal(storage.values.size, 0);
+  sync.dispose();
 });
-test('edits made during a save are sent in a second serialized write', async () => {
-  let release; const sent = [], storage = memory();
-  const remote = { load: async () => null, save: async (data, revision) => { sent.push([data.name, revision]); if(sent.length === 1) await new Promise(resolve => release = resolve); return revision + 1; } };
-  const sync = store(storage, remote); await sync.start(); sync.update(d => ({ ...d, name: 'First' }));
-  const saving = sync.sync(); sync.update(d => ({ ...d, name: 'Second' })); release(); await saving;
-  assert.deepEqual(sent, [['First', 0], ['Second', 1]]); assert.equal(JSON.parse(storage.getItem('account')).data.name, 'Second'); sync.dispose();
-});
-test('a stale revision preserves local changes and never overwrites the remote record', async () => {
-  const storage = memory(); storage.setItem('account', JSON.stringify({ data: { ...fresh(), name: 'Local' }, revision: 2, dirty: true }));
-  let saves = 0; const remote = { load: async () => ({ data: { ...fresh(), name: 'Other device' }, revision: 3 }), save: async () => ++saves };
+
+test('writes start automatically and edits during a write are serialized', async () => {
+  let release; const sent = [], storage = memory(); let row = null;
+  const remote = { load: async () => row, save: async (data, revision) => { sent.push([data.name, revision]); if(sent.length === 1) await new Promise(resolve => release = resolve); row = {data, revision: revision + 1}; return revision + 1; } };
   const sync = store(storage, remote); await sync.start();
-  assert.equal(sync.snapshot.status, 'conflict'); assert.equal(sync.snapshot.data.name, 'Local'); assert.equal(saves, 0);
-  await sync.loadAccountCopy(); assert.equal(sync.snapshot.data.name, 'Other device'); assert([...storage.values.keys()].some(key => key.includes(':backup:'))); sync.dispose();
+  const first = sync.update(d => ({ ...d, name: 'First' }));
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(sent.length, 1); assert.equal(sync.snapshot.status, 'syncing');
+  const second = sync.update(d => ({ ...d, name: 'Second' }));
+  release(); assert.equal(await first, true); assert.equal(await second, true); await sync.sync();
+  assert.deepEqual(sent, [['First', 0], ['Second', 1]]);
+  assert.equal(sync.snapshot.status, 'synced'); assert.equal(storage.values.size, 0); sync.dispose();
 });
-test('database compare-and-save conflict leaves local copy dirty', async () => {
-  const storage = memory(), sync = store(storage, { load: async () => null, save: async () => 0 });
-  await sync.start(); sync.update(d => ({ ...d, name: 'Kept' })); await sync.sync();
-  assert.equal(sync.snapshot.status, 'conflict'); assert.equal(JSON.parse(storage.getItem('account')).dirty, true); sync.dispose();
+
+test('a concurrent database write rebases the intended change without overwriting another device', async () => {
+  let row = { data: {...fresh(), name: 'Original'}, revision: 1 }, attempts = 0;
+  const remote = { load: async () => structuredClone(row), save: async (data, revision) => {
+    if (++attempts === 1) { row = {data:{...row.data, setups:{lat:'Seat 5'}},revision:2}; return 0; }
+    assert.equal(revision, 2); row = {data,revision:3}; return 3;
+  }};
+  const sync = store(memory(), remote); await sync.start();
+  assert.equal(await sync.update(d => ({...d,name:'New name'})), true); await sync.sync();
+  assert.equal(row.data.name, 'New name'); assert.deepEqual(row.data.setups, {lat:'Seat 5'});
+  assert.equal(sync.snapshot.status, 'synced'); sync.dispose();
 });
-test('accounts have separate keys and invalid caches are preserved', async () => {
-  assert.notEqual(trainingKey('alice'), trainingKey('bob')); assert.notEqual(trainingKey('alice'), trainingKey(null));
-  const storage = memory(); storage.setItem('account', 'not-json');
-  const sync = store(storage, { load: async () => null, save: async () => 1 }); await sync.start();
-  assert.equal(sync.snapshot.canSave, false); assert.equal(storage.getItem('account'), 'not-json'); sync.dispose();
-  assert.throws(() => parseTraining({ ...fresh(), history: [{ id: 'bad', started: 1, sets: {} }] }));
-  assert.throws(() => parseTraining({ ...fresh(), favorites: [null] }));
+
+test('uncertain database acknowledgement does not duplicate a set or replay a toggle twice', async () => {
+  let row = null, lost = true;
+  const remote = { load: async () => structuredClone(row), save: async (data, revision) => {
+    row = {data,revision:revision+1}; if(lost){lost=false;throw new Error('Response lost');} return row.revision;
+  }};
+  const sync = store(memory(), remote); await sync.start();
+  const saved = await sync.update(d => ({...d,favorites:d.favorites.includes('lat')?[]:['lat'],current:{id:'open',routine:'Pull day',started:1,sets:{lat:[{weight:40,reps:10,done:true}]}}}));
+  assert.equal(saved, false); assert.equal(sync.snapshot.status, 'offline'); assert.equal(sync.snapshot.pending, true); assert.equal(sync.snapshot.canSave, false);
+  await sync.sync();
+  assert.deepEqual(sync.snapshot.data.favorites, ['lat']); assert.equal(sync.snapshot.data.current.sets.lat.length, 1);
+  assert.equal(sync.snapshot.pending, false); assert.equal(sync.snapshot.status, 'synced'); sync.dispose();
 });
+
+test('unconfirmed changes retry automatically from memory and are never reported as saved', async () => {
+  let online = false, row = null;
+  const storage = memory(), remote = {load:async()=>row,save:async(data,revision)=>{if(!online)throw new Error('Offline'); row={data,revision:revision+1}; return row.revision;}};
+  const sync = store(storage, remote); await sync.start();
+  assert.equal(await sync.update(d=>({...d,name:'Retry me'})), false);
+  assert.equal(sync.snapshot.status, 'offline'); assert.match(sync.snapshot.message, /Not saved/); assert.equal(storage.values.size, 0);
+  online=true; await sync.sync(); assert.equal(row.data.name,'Retry me'); assert.equal(sync.snapshot.pending,false); assert.equal(sync.snapshot.status,'synced'); sync.dispose();
+});
+
+test('idle refresh adopts database changes; selection and drafts never write training records', async () => {
+  let saves=0,row={data:{...fresh(),name:'First device'},revision:1};
+  const sync=store(memory(),{load:async()=>row,save:async()=>++saves}); await sync.start();
+  await sync.update(d=>({...d,selectedId:'lat',drafts:{lat:{weight:'40',reps:'10'}}}));
+  assert.equal(saves,0); row={data:{...fresh(),name:'Other device'},revision:2}; await sync.sync();
+  assert.equal(sync.snapshot.data.name,'Other device'); assert.equal(sync.snapshot.data.selectedId,'lat'); assert.equal(sync.snapshot.data.drafts.lat.weight,'40'); sync.dispose();
+});
+
+test('repeated concurrent writes are bounded and retryable without a device-copy choice', async () => {
+  let attempts=0;
+  const sync=store(memory(),{load:async()=>null,save:async()=>{attempts++;return 0;}}); await sync.start();
+  assert.equal(await sync.update(d=>({...d,name:'Pending'})),false);
+  assert.equal(attempts,5); assert.equal(sync.snapshot.pending,true); assert.equal(sync.snapshot.canSave,false); assert.equal(sync.snapshot.status,'offline'); sync.dispose();
+});
+
+test('invalid old caches cannot block the database and training receipts are validated', async () => {
+  const storage=memory(); storage.setItem('account','not-json');
+  const sync=store(storage,{load:async()=>({data:{...fresh(),name:'Database'},revision:3}),save:async()=>{throw new Error('Unexpected save');}}); await sync.start();
+  assert.equal(sync.snapshot.canSave,true); assert.equal(sync.snapshot.data.name,'Database'); assert.equal(storage.getItem('account'),'not-json'); sync.dispose();
+  assert.notEqual(trainingKey('alice'),trainingKey('bob'));
+  assert.throws(()=>parseTraining({...fresh(),appliedChanges:[null]}));
+  assert.throws(()=>parseTraining({...fresh(),appliedChanges:Array(257).fill('x')}));
+});
+
 test('disposed account cannot apply a late response to a different account UI', async () => {
   let release; const updates = [];
-  const sync = new TrainingSync('old-user', memory(), { load: async () => new Promise(resolve => release = resolve), save: async () => 1 }, snapshot => updates.push(snapshot));
-  const starting = sync.start(); sync.dispose(); release({ data: { ...fresh(), name: 'Old user' }, revision: 1 }); await starting;
+  const sync = new TrainingSync({ load: async () => new Promise(resolve => release = resolve), save: async () => 1 }, snapshot => updates.push(snapshot));
+  const starting = sync.start(); await Promise.resolve(); sync.dispose(); release({ data: { ...fresh(), name: 'Old user' }, revision: 1 }); await starting;
   assert(!updates.some(snapshot => snapshot.data.name === 'Old user'));
+});
+
+test('open sessions are in History before finishing, and finishing preserves their name and sets', () => {
+  const {trainingSessions,recordTrainingSet,finishTrainingSession}=require('../lib/training-sessions.ts');
+  const session={id:'open',routine:'Push day',started:1,sets:{}};
+  const logged=recordTrainingSet(fresh(),session,'incline',{weight:45,reps:10,done:true,loggedAt:2},{exerciseId:'incline',endAt:1000,paused:null,duration:120,complete:false});
+  assert.equal(trainingSessions(logged).length,1); assert.equal(trainingSessions(logged)[0].finished,undefined);
+  const finished=finishTrainingSession(logged,'open',100);
+  assert.equal(finished.current,null); assert.equal(trainingSessions(finished).length,1); assert.equal(finished.history[0].routine,'Push day'); assert.equal(finished.history[0].finished,100); assert.equal(finished.history[0].sets.incline.length,1);
+});
+
+test('resuming another open session preserves both workouts and a concurrent finish does not lose a set', () => {
+  const {trainingSessions,recordTrainingSet,resumeTrainingSession}=require('../lib/training-sessions.ts');
+  const a={id:'a',routine:'A',started:1,sets:{lat:[{weight:40,reps:10,done:true}]}},b={id:'b',routine:'B',started:2,sets:{}};
+  const data={...fresh(),current:a,history:[b]};
+  const resumed=resumeTrainingSession(data,'b'); assert.equal(resumed.current.id,'b'); assert.equal(trainingSessions(resumed).length,2);
+  const concurrent={...fresh(),history:[{...a,finished:3}]};
+  const result=recordTrainingSet(concurrent,a,'lat',{weight:45,reps:8,done:true},null);
+  assert.equal(result.history[0].finished,3); assert.equal(result.history[0].sets.lat.length,2); assert.equal(result.current,null);
+});
+
+test('legacy recovery preserves database settings, merges equal sets by count, and does not reimport deleted sets', () => {
+  const {recoverLegacySessions,trainingSessions}=require('../lib/training-sessions.ts');
+  const a={id:'a',routine:'Database name',started:1,finished:10,sets:{lat:[{done:true,reps:10,weight:40}]}};
+  const old={...a,routine:'Old name',finished:undefined,sets:{lat:[{weight:40,reps:10,done:true},{weight:40,reps:10,done:true}]}};
+  const data={...fresh(),history:[a],name:'Database'};
+  const legacy={...fresh(),current:old,name:'Old cache'};
+  const recovered=recoverLegacySessions(data,legacy,'recovery-1');
+  assert.equal(recovered.name,'Database');assert.equal(recovered.current,null);assert.equal(recovered.history[0].finished,10);assert.equal(recovered.history[0].routine,'Database name');assert.equal(recovered.history[0].sets.lat.length,2);
+  const edited={...recovered,history:[{...recovered.history[0],sets:{lat:[]}}]};
+  assert.equal(recoverLegacySessions(edited,legacy,'recovery-1'),edited);
+  const freshAccount=recoverLegacySessions(fresh(),legacy,'recovery-2');
+  assert.equal(trainingSessions(freshAccount).length,1);assert.equal(freshAccount.current.id,'a');assert.equal(freshAccount.current.finished,undefined);
+});
+
+test('two devices logging at once keep both sets in the same database session', async () => {
+  const {recordTrainingSet}=require('../lib/training-sessions.ts');
+  const session={id:'shared',routine:'Pull day',started:1,sets:{}};
+  let row={data:{...fresh(),current:session},revision:1};
+  const remote={load:async()=>structuredClone(row),save:async(data,revision)=>{if(revision!==row.revision)return 0;row={data:structuredClone(data),revision:revision+1};return row.revision;}};
+  const a=store(memory(),remote),b=store(memory(),remote);await Promise.all([a.start(),b.start()]);
+  const results=await Promise.all([a.update(d=>recordTrainingSet(d,session,'lat',{weight:40,reps:10,done:true,loggedAt:2},null)),b.update(d=>recordTrainingSet(d,session,'lat',{weight:45,reps:8,done:true,loggedAt:3},null))]);
+  assert.deepEqual(results,[true,true]);assert.equal(row.data.current.sets.lat.length,2);assert.deepEqual(row.data.current.sets.lat.map(set=>set.weight).sort(),[40,45]);a.dispose();b.dispose();
+});
+
+test('a database-backed open session survives reload, can be named, and then finished', async () => {
+  const {recordTrainingSet,trainingSessions,updateTrainingSession,finishTrainingSession}=require('../lib/training-sessions.ts');
+  let row=null;
+  const remote={load:async()=>structuredClone(row),save:async(data,revision)=>{row={data:structuredClone(data),revision:revision+1};return row.revision;}};
+  const session={id:'persisted',routine:'Free training',started:1,sets:{}};
+  const first=store(memory(),remote);await first.start();assert.equal(await first.update(d=>recordTrainingSet(d,session,'lat',{weight:40,reps:10,done:true},null)),true);first.dispose();
+  const second=store(memory(),remote);await second.start();
+  assert.equal(trainingSessions(second.snapshot.data)[0].finished,undefined);assert.equal(trainingSessions(second.snapshot.data)[0].sets.lat.length,1);
+  await second.update(d=>updateTrainingSession(d,'persisted',s=>({...s,routine:'Pull day'})));
+  assert.equal(await second.update(d=>finishTrainingSession(d,'persisted',100)),true);second.dispose();
+  const third=store(memory(),remote);await third.start();assert.equal(third.snapshot.data.current,null);assert.equal(third.snapshot.data.history[0].routine,'Pull day');assert.equal(third.snapshot.data.history[0].finished,100);third.dispose();
+});
+
+test('large edit bursts are acknowledged in bounded batches without replaying earlier changes', async () => {
+  let row=null,writes=0;
+  const remote={load:async()=>row,save:async(data,revision)=>{writes++;row={data,revision:revision+1};return row.revision;}};
+  const sync=store(memory(),remote);await sync.start();
+  const edits=Array.from({length:270},()=>sync.update(d=>({...d,name:String(Number(d.name||0)+1)})));
+  assert((await Promise.all(edits)).every(Boolean));
+  assert.equal(row.data.name,'270');assert.equal(writes,3);assert.equal(sync.snapshot.pending,false);sync.dispose();
+});
+
+test('a no-op matching an unconfirmed change still waits for database acknowledgement', async () => {
+  let release;
+  const sync=store(memory(),{load:async()=>null,save:async()=>{await new Promise(resolve=>release=resolve);throw new Error('Offline');}});await sync.start();
+  const first=sync.update(d=>({...d,name:'Pending'}));await new Promise(resolve=>setImmediate(resolve));
+  let resolved=false;const repeated=sync.update(d=>({...d,name:'Pending'})).then(saved=>{resolved=true;return saved;});
+  await Promise.resolve();assert.equal(resolved,false);release();assert.equal(await first,false);assert.equal(await repeated,false);sync.dispose();
 });

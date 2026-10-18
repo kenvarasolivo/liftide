@@ -11,20 +11,24 @@ interface InstallEvent extends Event {
 export function PwaControls() {
   const [install, setInstall] = useState<InstallEvent | null>(null);
   const [ios, setIos] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  const [installed, setInstalled] = useState(false);
+  const [requested, setRequested] = useState(false);
   const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     const standalone = window.matchMedia('(display-mode: standalone)').matches ||
       (navigator as Navigator & { standalone?: boolean }).standalone;
+    setInstalled(!!standalone);
     setIos(!standalone && (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)));
     const onInstall = (event: Event) => {
       event.preventDefault();
       if (!standalone) setInstall(event as InstallEvent);
     };
-    const onInstalled = () => { setInstall(null); setIos(false); };
+    const onInstalled = () => { setInstall(null); setIos(false); setRequested(false); setInstalled(true); };
+    const onRequest = () => setRequested(true);
+    window.addEventListener('liftide:install', onRequest);
     window.addEventListener('beforeinstallprompt', onInstall);
     window.addEventListener('appinstalled', onInstalled);
 
@@ -53,6 +57,7 @@ export function PwaControls() {
       disposed = true;
       window.removeEventListener('beforeinstallprompt', onInstall);
       window.removeEventListener('appinstalled', onInstalled);
+      window.removeEventListener('liftide:install', onRequest);
       registration?.removeEventListener('updatefound', onUpdate);
       document.removeEventListener('visibilitychange', checkUpdate);
     };
@@ -74,13 +79,13 @@ export function PwaControls() {
     waiting.postMessage({ type: 'SKIP_WAITING' });
   }
 
-  if (!waiting && (dismissed || (!install && !ios))) return null;
-  return <aside className="pwa-bar" aria-label={waiting ? 'App update' : 'Install Liftide'}>
+  if (!waiting && !requested) return null;
+  return <aside className={`pwa-bar ${waiting ? 'pwa-update' : 'pwa-install'}`} aria-label={waiting ? 'App update' : 'Install Liftide'}>
     <p>{waiting ? 'A new version of Liftide is ready. Update when you finish your set.' :
-      ios ? 'Keep Liftide on your Home Screen: tap Share, then Add to Home Screen.' :
-      'Keep Liftide close. Install it for your next workout.'}</p>
+      installed ? 'Liftide is already installed. Open it from your Home Screen or app launcher.' : ios ? 'Keep Liftide on your Home Screen: tap Share, then Add to Home Screen.' :
+      install ? 'Keep Liftide close. Install it for your next workout.' : 'Open your browser menu to install Liftide or add it to your Home Screen.'}</p>
     {waiting ? <button onClick={updateApp} disabled={updating}>{updating ? 'Updating…' : 'Update app'}</button> :
       <>{install && <button onClick={() => void installApp()}>Install app</button>}
-        <button className="pwa-dismiss" onClick={() => setDismissed(true)} aria-label="Dismiss installation suggestion">×</button></>}
+        <button className="pwa-dismiss" onClick={() => setRequested(false)} aria-label="Dismiss installation suggestion">×</button></>}
   </aside>;
 }

@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: '/',
     name: 'Liftide — Your training, sharpened.',
     short_name: 'Liftide',
-    description: 'Your workout log, rest timer, and muscle map. Train at your own pace, even offline.',
+    description: 'Your workout log, rest timer, and muscle map. Your sets save automatically to your account.',
     start_url: '/train',
     scope: '/',
     display: 'standalone',

@@ -1,127 +1,116 @@
 import { emptyData, parseTraining, STORAGE_KEY, type TrainingData } from './machine-training';
 
-export type SyncStatus = 'preview' | 'loading' | 'syncing' | 'synced' | 'offline' | 'conflict' | 'error';
-export type TrainingSnapshot = { data: TrainingData; loaded: boolean; canSave: boolean; status: SyncStatus; message: string };
-type Cache = { data: TrainingData; revision: number; dirty: boolean };
-class CacheError extends Error {}
+export type SyncStatus = 'preview' | 'loading' | 'syncing' | 'synced' | 'offline' | 'error';
+export type TrainingSnapshot = { data: TrainingData; loaded: boolean; canSave: boolean; pending: boolean; status: SyncStatus; message: string };
 export type TrainingRemote = { load(): Promise<{ data: unknown; revision: number } | null>; save(data: TrainingData, revision: number): Promise<number> };
+type Change = { id: string; apply: (data: TrainingData) => TrainingData; resolve: (saved: boolean) => void };
+const persistent = (data: TrainingData): TrainingData => ({ ...data, selectedId: null, drafts: {} });
 
-// The controller owns one user scope for its lifetime. It never copies guest
-// data into an account, and acknowledges only the exact snapshot sent remotely.
+// The database is the only durable training store. UI drafts and unacknowledged
+// changes exist in memory only. Revision retries replay changes, never stale records.
 export class TrainingSync {
-  snapshot: TrainingSnapshot = { data: emptyData, loaded: false, canSave: true, status: 'loading', message: '' };
-  private cache: Cache = { data: emptyData, revision: 0, dirty: false };
-  private connected = false;
-  private running = false;
+  snapshot: TrainingSnapshot = { data: structuredClone(emptyData), loaded: false, canSave: false, pending: false, status: 'loading', message: '' };
+  private committed = structuredClone(emptyData);
+  private selectedId: string | null = null;
+  private drafts: TrainingData['drafts'] = {};
+  private changes: Change[] = [];
+  private running: Promise<void> | null = null;
   private disposed = false;
-  private timer: ReturnType<typeof setTimeout> | undefined;
-  constructor(private key: string, private storage: Pick<Storage, 'getItem' | 'setItem'>, private remote: TrainingRemote | null, private emit: (snapshot: TrainingSnapshot) => void) {}
+  constructor(private remote: TrainingRemote | null, private emit: (snapshot: TrainingSnapshot) => void) {}
 
   private publish(update: Partial<TrainingSnapshot>) {
     if (this.disposed) return;
     this.snapshot = { ...this.snapshot, ...update };
     this.emit(this.snapshot);
   }
-  private persist() {
-    if (!this.remote) return;
-    try { this.storage.setItem(this.key, JSON.stringify(this.cache)); }
-    catch { throw new CacheError('Could not save the local cache'); }
+  private view(data: TrainingData) { return { ...data, selectedId: this.selectedId, drafts: this.drafts }; }
+  private acknowledge(data: TrainingData) {
+    const receipts = new Set(data.appliedChanges ?? []);
+    this.changes = this.changes.filter(change => {
+      if (!receipts.has(change.id)) return true;
+      change.resolve(true);
+      return false;
+    });
+  }
+  private optimistic() {
+    return this.view(this.changes.reduce((data, change) => persistent(change.apply(this.view(data))), this.committed));
   }
   async start() {
     if (!this.remote) {
-      this.cache.data = structuredClone(emptyData);
-      this.publish({ data: this.cache.data, loaded: true, canSave: false, status: 'preview' });
-      return;
-    }
-    try {
-      if (this.remote) {
-        const raw = this.storage.getItem(this.key);
-        if (raw) {
-          const cached = JSON.parse(raw) as Cache;
-          if (!Number.isSafeInteger(cached.revision) || cached.revision < 0 || typeof cached.dirty !== 'boolean') throw new Error('Invalid cache');
-          this.cache = { ...cached, data: parseTraining(cached.data) };
-        }
-      }
-      this.publish({ data: this.cache.data, loaded: true, status: 'loading' });
-    } catch {
-      this.publish({ loaded: true, canSave: false, status: 'error', message: 'Saved data could not be loaded. Your previous storage has been kept.' });
+      this.publish({ loaded: true, status: 'preview' });
       return;
     }
     await this.sync();
   }
-  update(updater: TrainingData | ((data: TrainingData) => TrainingData)) {
-    if (!this.snapshot.loaded || this.disposed) return;
+  update(updater: TrainingData | ((data: TrainingData) => TrainingData)): Promise<boolean> {
+    if (!this.snapshot.loaded || this.disposed) return Promise.resolve(false);
+    const apply = typeof updater === 'function' ? updater : () => updater;
+    const next = apply(this.snapshot.data);
+    this.selectedId = next.selectedId;
+    this.drafts = next.drafts;
     if (!this.remote) {
-      // Guests can inspect equipment and try the inputs. Personal training
-      // fields are rejected, and preview state never touches browser storage.
-      const next = typeof updater === 'function' ? updater(this.cache.data) : updater;
-      this.cache.data = { ...this.cache.data, selectedId: next.selectedId, drafts: next.drafts };
-      this.publish({ data: this.cache.data });
-      return;
+      this.publish({ data: this.view(this.committed) });
+      return Promise.resolve(false);
     }
-    if (!this.snapshot.canSave) return;
-    const next = typeof updater === 'function' ? updater(this.cache.data) : updater;
-    if (JSON.stringify(next) === JSON.stringify(this.cache.data)) return;
-    this.cache = { ...this.cache, data: next, dirty: Boolean(this.remote) };
-    try { this.persist(); }
-    catch { this.publish({ data: next, canSave: false, status: 'error', message: 'Your browser could not save this change. Export your data to keep a copy.' }); return; }
-    this.publish({ data: next, status: this.snapshot.status === 'conflict' ? 'conflict' : 'syncing' });
-    if (this.remote && this.snapshot.status !== 'conflict') {
-      clearTimeout(this.timer);
-      this.timer = setTimeout(() => void this.sync(), 800);
+    if (JSON.stringify(persistent(next)) === JSON.stringify(persistent(this.snapshot.data))) {
+      this.publish({ data: this.view(this.snapshot.data) });
+      return this.changes.length ? this.sync().then(() => !this.snapshot.pending && this.snapshot.canSave) : Promise.resolve(true);
     }
+    if (!this.snapshot.canSave) return Promise.resolve(false);
+    const result = new Promise<boolean>(resolve => this.changes.push({ id: crypto.randomUUID(), apply, resolve }));
+    this.publish({ data: next, pending: true, status: 'syncing', message: '' });
+    void this.sync();
+    return result.then(async saved => { await this.running; return saved; });
   }
-  async sync() {
-    if (!this.remote || this.running || this.disposed || !this.snapshot.canSave || this.snapshot.status === 'conflict') return;
-    this.running = true;
-    try {
-      if (!this.connected) {
-        const row = await this.remote.load();
-        if (this.disposed) return;
-        const revision = row?.revision ?? 0;
-        if (this.cache.dirty && revision !== this.cache.revision) {
-          this.publish({ status: 'conflict', message: 'Your account changed on another device. Export this device’s copy before loading your account copy.' }); return;
-        }
-        if (!this.cache.dirty) {
-          this.cache = { data: row ? parseTraining(row.data) : this.cache.data, revision, dirty: false };
-          this.persist(); this.publish({ data: this.cache.data });
-        }
-        this.connected = true;
-      }
-      while (this.cache.dirty && !this.disposed) {
-        this.publish({ status: 'syncing', message: '' });
-        const sent = JSON.stringify(this.cache.data);
-        const revision = await this.remote.save(JSON.parse(sent) as TrainingData, this.cache.revision);
-        if (this.disposed) return;
-        if (revision === 0) {
-          this.publish({ status: 'conflict', message: 'Your account changed on another device. Export this device’s copy before loading your account copy.' }); return;
-        }
-        this.cache.revision = revision;
-        this.cache.dirty = JSON.stringify(this.cache.data) !== sent;
-        this.persist();
-      }
-      this.publish({ status: 'synced', message: '' });
-    } catch (error) {
-      if (error instanceof CacheError) this.publish({ data: this.cache.data, canSave: false, status: 'error', message: 'Your browser could not keep a local copy. Export your data before closing this page.' });
-      else this.publish({ status: 'offline', message: 'Your workouts are saved on this device. Account sync is unavailable. Retry when you’re online.' });
-    } finally { this.running = false; }
+  sync(): Promise<void> {
+    if (!this.remote || this.disposed) return Promise.resolve();
+    if (this.running) return this.running;
+    // Defer the work by one microtask so every caller shares the running promise.
+    this.running = Promise.resolve().then(() => this.flush()).finally(() => { this.running = null; });
+    return this.running;
   }
-  async loadAccountCopy() {
-    if (!this.remote || this.running || this.disposed) return;
-    this.running = true;
+  private async flush() {
+    if (!this.remote) return;
     try {
-      const row = await this.remote.load();
+      let conflicts = 0;
+      // Refresh even when idle, so another device's confirmed changes appear here.
+      let row = await this.remote.load();
       if (this.disposed) return;
-      const next = row ? parseTraining(row.data) : { ...emptyData };
-      // Preserve the full unsynced version before replacing local data.
-      this.storage.setItem(`${this.key}:backup:${Date.now()}`, JSON.stringify(this.cache));
-      this.cache = { data: next, revision: row?.revision ?? 0, dirty: false };
-      this.persist(); this.connected = true;
-      this.publish({ data: next, status: 'synced', message: '' });
-    } catch { this.publish({ message: 'Could not load your account copy. Your device copy is still kept.' }); }
-    finally { this.running = false; }
+      this.committed = row ? parseTraining(row.data) : structuredClone(emptyData);
+      this.acknowledge(this.committed);
+      while (this.changes.length && !this.disposed) {
+        const batch = this.changes.slice(0, 128);
+        let next = batch.reduce((data, change) => persistent(change.apply(this.view(data))), this.committed);
+        next = { ...next, appliedChanges: [...(this.committed.appliedChanges ?? []), ...batch.map(change => change.id)].slice(-256) };
+        this.publish({ data: this.view(next), loaded: true, pending: true, status: 'syncing', message: '' });
+        const revision = await this.remote.save(next, row?.revision ?? 0);
+        if (this.disposed) return;
+        if (!revision) {
+          if (++conflicts >= 5) throw new Error('Concurrent updates');
+          row = await this.remote.load();
+          if (this.disposed) return;
+          this.committed = row ? parseTraining(row.data) : structuredClone(emptyData);
+          this.acknowledge(this.committed);
+          continue;
+        }
+        conflicts = 0;
+        this.committed = next;
+        row = { data: next, revision };
+        this.acknowledge(next);
+        this.publish({ data: this.optimistic(), pending: this.changes.length > 0 });
+      }
+      this.publish({ data: this.view(this.committed), loaded: true, pending: false, canSave: true, status: 'synced', message: '' });
+    } catch {
+      if (this.disposed) return;
+      // Never claim an unacknowledged write is saved or persist it on the device.
+      for (const change of this.changes) change.resolve(false);
+      this.publish({ loaded: true, canSave: false, pending: this.changes.length > 0, status: 'offline', message: this.changes.length
+        ? 'Not saved to the database yet. Keep this page open and reconnect; saving will retry automatically.'
+        : 'Connect to the internet to load your training and save sets to the database.' });
+    }
   }
-  dispose() { this.disposed = true; clearTimeout(this.timer); }
+  dispose() { this.disposed = true; for (const change of this.changes) change.resolve(false); }
 }
 
+// Only used to locate old records for legacy recovery and export.
 export const trainingKey = (userId: string | null) => userId ? `${STORAGE_KEY}:account:${userId}` : STORAGE_KEY;

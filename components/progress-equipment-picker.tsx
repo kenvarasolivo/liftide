@@ -16,7 +16,7 @@ type Props = {
   onSelect: (exercise: Exercise) => void;
 };
 
-export default function ProgressEquipmentPicker({ initialOpen = true, equipment, photos, labels, sessions, selectedId, onSelect }: Props) {
+export default function ProgressEquipmentPicker({ initialOpen = false, equipment, photos, labels, sessions, selectedId, onSelect }: Props) {
   const [open, setOpen] = useState(initialOpen);
   const [search, setSearch] = useState('');
   const [group, setGroup] = useState<Category>('All machines');
@@ -68,7 +68,7 @@ export default function ProgressEquipmentPicker({ initialOpen = true, equipment,
         <button className="progress-history-filter" aria-pressed={withHistory} onClick={() => { setWithHistory(!withHistory); setLimit(8); }}>{withHistory && <Check size={15}/>}With history</button>
       </div>
       <div className="progress-exercise-grid" aria-label="Progress exercises">
-        {matches.slice(0, limit).map(e => <button key={e.id} className="progress-exercise-tile" aria-label={`View progress for ${e.name}`} aria-pressed={e.id === selectedId} onClick={() => onSelect(e)}>
+        {matches.slice(0, limit).map(e => <button key={e.id} className="progress-exercise-tile" aria-label={`View progress for ${e.name}`} aria-pressed={e.id === selectedId} onClick={() => { onSelect(e); setOpen(false); returnToHeading(); }}>
           <img src={photo(e)} alt="" loading="lazy"/>
           <span><strong>{e.name}</strong><small>{labels[e.id] || e.muscles.join(' · ')}</small>{lastLogged.has(e.id) && <small className="progress-last-logged">{formatDate(lastLogged.get(e.id)!)}</small>}</span>
           {e.id === selectedId && <Check size={17} className="progress-picker-check"/>}

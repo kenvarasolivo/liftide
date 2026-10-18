@@ -1,0 +1,13 @@
+/* Preserve browser zoom and touch scrolling. */
+html {
+  touch-action: auto;
+}
+
+@media (max-width: 768px), (any-pointer: coarse), (display-mode: standalone) {
+  /* iOS zooms focused form fields when their text is smaller than 16px. */
+  input:not(#weight):not(#reps),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

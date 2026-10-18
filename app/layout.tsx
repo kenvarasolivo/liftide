@@ -5,10 +5,16 @@ import './globals.css';
 import './polish.css';
 import './premium.css';
 import './themes.css';
+import './mobile.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { themeInitScript } from '@/lib/theme';
 export const metadata: Metadata = { title: 'Liftide — Your training, sharpened.', description: 'Train with intent. Your machine-aware workout companion, rest timer, and muscle map.' };
-export const viewport: Viewport = { themeColor: '#09090b', viewportFit: 'cover' };
+export const viewport: Viewport = {
+  themeColor: '#09090b',
+  viewportFit: 'cover',
+  width: 'device-width',
+  initialScale: 1,
+};
 metadata.applicationName = 'Liftide';
 metadata.appleWebApp = { capable: true, title: 'Liftide', statusBarStyle: 'default' };
 metadata.icons = {
