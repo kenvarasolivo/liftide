@@ -1,0 +1,58 @@
+/* Working screens retain their existing layout, data and event handlers. */
+.app-shell {
+  --muted: #b4b4b4;
+  --radius: 12px;
+}
+.app-shell .sidebar { border-right-color: var(--line); }
+.app-shell .nav-item:hover { color: var(--text); }
+.app-shell .category-filters { display: flex; flex-wrap: wrap; gap: 8px; overflow: visible; margin-inline: 0; padding-inline: 0; }
+.app-shell .category-filters button { min-height: 44px; padding: 10px 16px; font-size: 13px; }
+.app-shell .favorites-filter { font-size: 13px; }
+.app-shell .search-field { background: var(--surface); }
+.app-shell .machine-card,
+.app-shell .card,
+.app-shell .continue-machine { border-radius: 12px; box-shadow: none; background-image: none; }
+.app-shell .machine-card { background: var(--surface); }
+.app-shell .machine-card:hover { transform: none; background: var(--surface-raised); }
+.app-shell .machine-card-copy { padding: 16px 18px 12px; }
+.app-shell .machine-card-copy h3 { min-height: 2.7em; }
+.app-shell .machine-card-copy > p { min-height: 1.5em; font-size: 13px; color: var(--muted); }
+.app-shell .last-lift { margin-top: 12px; min-height: 24px; color: var(--muted); }
+.app-shell .machine-card-action { margin-top: 8px; }
+.app-shell .machine-progress { color: var(--muted); }
+.app-shell .category-tag { font-size: 12px; background: #171719; color: #f3f3f3; backdrop-filter: none; }
+.app-shell .library-description { font-size: 14px; line-height: 1.6; }
+.app-shell .library-count,
+.app-shell .equipment-type-label { font-size: 13px; }
+.app-shell .machine-card :is(button, a):focus-visible { outline-offset: -4px; }
+.app-shell .eyebrow { font-size: 12px; text-transform: none; letter-spacing: 0; }
+.app-shell .body-command { --body-blue: var(--accent-bright); --body-muted: var(--muted); }
+.app-shell .set-field input,
+.app-shell .session-status,
+.app-shell .history-stats,
+.app-shell .progress-summary { font-variant-numeric: tabular-nums; }
+.app-shell .set-field input { font-size: 40px; }
+.app-shell .rest-preview,
+.app-shell .training-save-status { font-size: 13px; }
+.auth-page .auth-description { font-size: 16px; line-height: 1.65; }
+.auth-page .auth-field { font-size: 14px; }
+.auth-page .auth-card h1 { font-size: 38px; letter-spacing: -.04em; }
+.auth-page .auth-field input { min-height: 52px; border-radius: 8px; }
+.auth-page .primary-button,
+.auth-page .secondary-button { min-height: 52px; border-radius: 8px;  }
+.auth-page .secondary-button { background: var(--surface-raised); color: var(--text); }
+.auth-page .auth-privacy,
+.auth-page .auth-divider { font-size: 13px; color: var(--muted); }
+.auth-page .auth-back { min-height: 44px; font-size: 14px; }
+@media (max-width: 600px) {
+  .app-shell .favorites-filter { width: auto; min-width: 104px; flex-shrink: 0; gap: 8px; font-size: 12px; }
+  .app-shell .category-filters { margin-inline: 0; padding-inline: 0; gap: 6px; }
+  .app-shell .category-filters button { padding-inline: 12px; font-size: 12px; }
+  .app-shell .category-tag { font-size: 11px; }
+  .app-shell .machine-card-copy { padding: 12px; }
+  .app-shell .machine-card-copy > p { min-height: 2.8em; }
+  .app-shell .last-lift { min-height: 24px; margin-top: 8px; }
+  .app-shell .machine-card-action { margin-top: 4px; }
+  .auth-page .auth-main { padding-inline: 20px; }
+  .auth-page .auth-card h1 { font-size: 32px; }
+}

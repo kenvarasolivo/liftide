@@ -5,5 +5,6 @@ out/
 .env*
 !.env.example
 artifacts/
+.taste-skill/
 
 public/sw.js
